@@ -1,9 +1,9 @@
 - URL site WEB :
-- URL Notebook Observable :
-- Nom :
-- Prénom :
-- Nom binome :
-- Prénom binome :
+- URL Notebook Observable : https://observablehq.com/@mmi-montbeliard/sae-303-gr-03
+- Nom : Geiss
+- Prénom : Solène
+- Nom binome : Girardin Tarby
+- Prénom binome : Mathéo
 
 # Remarques :
 

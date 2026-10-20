@@ -1,0 +1,16 @@
+---
+// Scène du Jeton : un calque <canvas> épinglé (position: sticky) au-dessus des sections du récit.
+// Chaque section enfant porte data-jeton="début-fin" (images de la séquence) et contient un
+// élément [data-jeton-cible] qui indique où dessiner le Jeton. Décoratif : aria-hidden.
+---
+
+<div id="scene-jeton" class="relative">
+  <div class="pointer-events-none sticky top-0 z-20 -mb-[100vh] h-screen" aria-hidden="true">
+    <canvas class="block h-full w-full opacity-0 transition-opacity duration-300"></canvas>
+  </div>
+  <slot />
+</div>
+
+<script>
+  import "../scripts/jeton";
+</script>

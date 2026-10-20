@@ -1,0 +1,35 @@
+---
+// Tout graphique passe par ce composant : <figure> + titre neutre + sous-titre qui affirme
+// + SVG (rendu au build) + source en <figcaption> + texte alternatif complet (4 temps).
+interface Props {
+  titre: string;
+  sousTitre?: string | null;
+  svg?: string;
+  alt: string;
+  source: string;
+  sombre?: boolean;
+  remplir?: boolean;
+  class?: string;
+}
+const { titre, sousTitre, svg, alt, source, sombre = false, remplir = false, class: classe } = Astro.props;
+const id = "fig-" + Math.random().toString(36).slice(2, 9);
+---
+
+<figure
+  aria-labelledby={`${id}-titre`}
+  data-reveal={remplir ? "" : undefined}
+  class:list={[
+    "rounded-[20px] p-8",
+    sombre ? "border border-white/15 bg-nuit text-white" : "carte",
+    remplir && "remplir",
+    classe,
+  ]}
+>
+  <h3 id={`${id}-titre`} class="text-[19px]">{titre}</h3>
+  {sousTitre && <p class:list={["mt-2 text-[16px] font-bold leading-snug", sombre ? "text-ciel" : "text-roi"]}>{sousTitre}</p>}
+  <p id={`${id}-alt`} class="sr-only">{alt}</p>
+  <div class="graphique mt-6" role="img" aria-labelledby={`${id}-titre`} aria-describedby={`${id}-alt`}>
+    {svg ? <Fragment set:html={svg} /> : <slot />}
+  </div>
+  <figcaption class:list={["mt-5 text-[13px]", sombre ? "text-ciel" : "text-doux"]}>{source}</figcaption>
+</figure>

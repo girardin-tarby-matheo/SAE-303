@@ -1,0 +1,28 @@
+---
+// Ligne « 001 » cliquable sur toute la ligne, avec flèche ronde
+import { numero } from "../lib/format";
+interface Props {
+  rang: number;
+  href: string;
+  titre: string;
+  sousTitre?: string;
+  meta?: string;
+  detail?: string;
+}
+const { rang, href, titre, sousTitre, meta, detail } = Astro.props;
+---
+
+<li class="border-b border-current/15">
+  <a href={href} class="ligne group grid grid-cols-[5rem_1fr_12rem_13rem_3rem] items-center gap-6 py-5">
+    <span class="numero">{numero(rang)}</span>
+    <span>
+      <span class="block font-display text-[20px] font-semibold uppercase leading-tight group-hover:underline">{titre}</span>
+      {sousTitre && <span class="mt-1 block font-mono text-[12px] opacity-75" lang="en">{sousTitre}</span>}
+    </span>
+    <span class="font-mono text-[14px] opacity-80">{detail}</span>
+    <span class="text-right font-mono text-[15px] font-semibold">{meta}</span>
+    <span class="fleche-ronde" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+    </span>
+  </a>
+</li>

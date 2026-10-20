@@ -1,1 +1,268 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  themes: false;
+}
+@plugin "daisyui/theme" {
+  name: "tokenwatt";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: #F5F8FE;
+  --color-base-200: #EAF2FE;
+  --color-base-300: #D6E3F8;
+  --color-base-content: #0A1F44;
+  --color-primary: #1E5BD8;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #0A1F44;
+  --color-secondary-content: #FFFFFF;
+  --color-accent: #FFC23D;
+  --color-accent-content: #0A1F44;
+  --color-neutral: #12306B;
+  --color-neutral-content: #FFFFFF;
+  --color-info: #5B8DEF;
+  --color-info-content: #0A1F44;
+  --color-success: #2E8B57;
+  --color-success-content: #FFFFFF;
+  --color-warning: #FFC23D;
+  --color-warning-content: #0A1F44;
+  --color-error: #C0392B;
+  --color-error-content: #FFFFFF;
+  --radius-selector: 2rem;
+  --radius-field: 9999px;
+  --radius-box: 2rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.28125rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@theme {
+  --font-display: var(--font-unbounded), "Unbounded", sans-serif;
+  --font-sans: var(--font-manrope), "Manrope", sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", monospace;
+
+  --color-navy: #0A1F44;
+  --color-nuit: #12306B;
+  --color-roi: #1E5BD8;
+  --color-moyen: #5B8DEF;
+  --color-ciel: #A9C6F5;
+  --color-glace: #EAF2FE;
+  --color-volt: #FFC23D;
+  --color-inconnu: #C3CAD6;
+  --color-doux: #4A5A78; 
+  --color-trait: #D6E3F8;
+
+  --radius-bloc: 32px;
+  --radius-carte: 20px;
+  --shadow-bleu: 0 24px 60px -24px rgb(30 91 216 / 0.28), 0 2px 6px rgb(10 31 68 / 0.05);
+  --shadow-bleu-fort: 0 30px 80px -20px rgb(10 31 68 / 0.45);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+  body {
+    min-width: 1024px; /* site conçu pour ordinateur */
+    background: var(--color-base-100);
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-roi);
+    outline-offset: 3px;
+  }
+  .sombre :focus-visible {
+    outline-color: var(--color-ciel);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------- Composants de la DA ---------- */
+@layer components {
+  .conteneur {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 48px;
+  }
+
+  /* Mot géant en contour (décoratif, toujours aria-hidden) */
+  .mot-geant {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: clamp(160px, 19vw, 260px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgb(30 91 216 / 0.25);
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .sombre .mot-geant {
+    -webkit-text-stroke-color: rgb(169 198 245 / 0.25);
+  }
+
+  /* Pastille de section « 01 · ... » */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-ciel);
+    border-radius: 9999px;
+    padding: 0.2rem 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-roi);
+    background: #fff;
+  }
+  .sombre .kicker {
+    background: transparent;
+    color: var(--color-ciel);
+    border-color: rgb(169 198 245 / 0.5);
+  }
+
+  .titre-1 {
+    font-size: clamp(48px, 4.6vw, 68px);
+  }
+  .titre-2 {
+    font-size: clamp(32px, 2.8vw, 40px);
+  }
+  /* seconde ligne fine des titres (« Unbounded 200 ») */
+  .titre-fin {
+    display: block;
+    font-weight: 200;
+  }
+
+  .carte {
+    background: #fff;
+    border: 1px solid var(--color-trait);
+    border-radius: var(--radius-carte);
+    box-shadow: var(--shadow-bleu);
+  }
+  .bloc-navy {
+    background: var(--color-navy);
+    color: #fff;
+    border-radius: var(--radius-bloc);
+  }
+
+  .chiffre {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Ligne numérotée « 001 » */
+  .numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.25rem;
+    height: 1.75rem;
+    border: 1.5px solid currentColor;
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .fleche-ronde {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: 9999px;
+    background: var(--color-ciel);
+    color: var(--color-navy);
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .ligne:hover .fleche-ronde,
+  .ligne:focus-visible .fleche-ronde {
+    background: var(--color-navy);
+    color: #fff;
+    transform: rotate(45deg);
+  }
+  .sombre .ligne:hover .fleche-ronde,
+  .sombre .ligne:focus-visible .fleche-ronde {
+    background: #fff;
+    color: var(--color-navy);
+  }
+
+  /* Graphiques Plot : largeur du conteneur, hauteur fixe */
+  .graphique svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* ---------- Apparitions (seulement si JS : sans JS, tout reste visible) ---------- */
+@keyframes glisser {
+  from { opacity: 0; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+.entree {
+  animation: glisser 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+.js [data-reveal] {
+  opacity: 0;
+  translate: 0 24px;
+  transition: opacity 700ms ease, translate 700ms ease;
+}
+.js [data-reveal].est-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+/* Barres qui se remplissent de gauche à droite, une seule fois */
+.js .remplir svg [aria-label="bar"] rect {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.js .remplir svg [aria-label="bar"] rect:nth-child(2) { transition-delay: 120ms; }
+.js .remplir svg [aria-label="bar"] rect:nth-child(3) { transition-delay: 240ms; }
+.js .remplir svg [aria-label="bar"] rect:nth-child(4) { transition-delay: 360ms; }
+.js .remplir.est-visible svg [aria-label="bar"] rect {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; translate: 0 0; }
+  .js .remplir svg [aria-label="bar"] rect { transform: none; }
+}
+
+/* Inclinaison CSS 3D au pointeur */
+.scene-3d {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+[data-tilt] {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 300ms ease-out;
+  will-change: transform;
+}

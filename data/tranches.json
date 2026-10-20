@@ -1,0 +1,17 @@
+[
+  {
+    "tranche": "moins de 1 Wh",
+    "n": 3154,
+    "part": 0.63
+  },
+  {
+    "tranche": "de 1 à 10 Wh",
+    "n": 1551,
+    "part": 0.31
+  },
+  {
+    "tranche": "plus de 10 Wh",
+    "n": 295,
+    "part": 0.06
+  }
+]

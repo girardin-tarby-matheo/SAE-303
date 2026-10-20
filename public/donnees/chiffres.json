@@ -1,0 +1,105 @@
+{
+  "source": {
+    "nom": "Compar:IA",
+    "producteur": "ministère de la Culture",
+    "url": "https://www.data.gouv.fr/datasets/compar-ia",
+    "licence": "Licence Ouverte 2.0",
+    "date": "3 juin 2026",
+    "conversations_total": 410016,
+    "conversations_fr": 384953,
+    "part_fr": 0.94
+  },
+  "conversation": {
+    "echantillon": 5000,
+    "wh_median": 0.4,
+    "wh_moyen": 2.87,
+    "rapport_moyenne_mediane": 7.1,
+    "wh_max": 393.34,
+    "part_moins_1wh": 0.63,
+    "tokens_median": 741,
+    "tokens_q25": 379.5,
+    "tokens_q75": 1352.5
+  },
+  "modeles": {
+    "retenus": 115,
+    "seuil_conversations": 100,
+    "sans_params": 6,
+    "total": 115,
+    "part_conv_sans_params": 0.024,
+    "wh_1000_tokens_median": 0.68
+  },
+  "categorie_principale": {
+    "slug": "sciences-technologie",
+    "nom": "Sciences & technologie",
+    "ecart": 39,
+    "parTaille": [
+      {
+        "taille": "petit",
+        "modeles": 32,
+        "tokens_median": 1072,
+        "wh_1000_tokens_median": 0.09
+      },
+      {
+        "taille": "moyen",
+        "modeles": 44,
+        "tokens_median": 958.5,
+        "wh_1000_tokens_median": 0.97
+      },
+      {
+        "taille": "grand",
+        "modeles": 32,
+        "tokens_median": 776.5,
+        "wh_1000_tokens_median": 3.52
+      },
+      {
+        "taille": "inconnue",
+        "modeles": 4,
+        "tokens_median": 805,
+        "wh_1000_tokens_median": 1.31
+      }
+    ]
+  },
+  "ensemble": {
+    "parTaille": [
+      {
+        "taille": "petit",
+        "conversations": 1149,
+        "tokens_median": 729,
+        "wh_1000_tokens_median": 0.09
+      },
+      {
+        "taille": "moyen",
+        "conversations": 1726,
+        "tokens_median": 835.5,
+        "wh_1000_tokens_median": 0.2
+      },
+      {
+        "taille": "grand",
+        "conversations": 1993,
+        "tokens_median": 684,
+        "wh_1000_tokens_median": 3.93
+      },
+      {
+        "taille": "inconnue",
+        "conversations": 88,
+        "tokens_median": 811.5,
+        "wh_1000_tokens_median": 0.66
+      }
+    ],
+    "ecart": 44
+  },
+  "controles": {
+    "energie": {
+      "avant": 115,
+      "apres": 115
+    },
+    "tokens": {
+      "avant": 2619,
+      "apres": 1686
+    },
+    "echantillon": {
+      "avant": 5000,
+      "apres": 4956
+    }
+  }
+}

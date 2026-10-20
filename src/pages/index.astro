@@ -1,0 +1,208 @@
+---
+// Accueil : récit au scroll en 4 temps (contexte → exploration → révélation → conclusion). Route A : tout est calculé au build.
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Jeton from "../components/Jeton.astro";
+import Figure from "../components/Figure.astro";
+import Chip from "../components/Chip.astro";
+import LigneNumerotee from "../components/LigneNumerotee.astro";
+import { barresParTaille, barresTranches } from "../lib/graphiques";
+import { documentBuild } from "../lib/dom";
+import { nombre, wh, tokens, pourcent, minutesLED } from "../lib/format";
+import type { ParTaille, Tranche } from "../lib/types";
+import chiffres from "../data/chiffres.json";
+import tranches from "../data/tranches.json";
+import categories from "../data/categories.json";
+
+const { conversation, source, categorie_principale: principale } = chiffres;
+const parTaille = principale.parTaille as ParTaille[];
+const petit = parTaille.find((d) => d.taille === "petit")!;
+const moyen = parTaille.find((d) => d.taille === "moyen")!;
+const grand = parTaille.find((d) => d.taille === "grand")!;
+const document = documentBuild();
+
+const svgTranches = barresTranches(tranches as Tranche[], {
+  label: "Part des conversations par tranche d'électricité", document, width: 620,
+}).outerHTML;
+const svgLongueur = barresParTaille(parTaille, {
+  champ: "tokens_median", label: "tokens écrits par réponse (médiane)", document, width: 340, sombre: true,
+}).outerHTML;
+const svgCout = barresParTaille(parTaille, {
+  champ: "wh_1000_tokens_median", label: "Wh pour 1 000 tokens (médiane)", document, width: 340, sombre: true,
+}).outerHTML;
+
+const cat = categories.find((c) => c.slug === principale.slug)!;
+const top5 = categories.slice(0, 5);
+const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
+---
+
+<Base titre="TOKENWATT">
+  <Jeton>
+    <Hero />
+
+    <section id="contexte" data-jeton="30-59" data-jeton-mode="colonne" class="flex min-h-screen items-center py-28" aria-labelledby="titre-contexte">
+      <div class="conteneur grid grid-cols-12 gap-10">
+        <div class="col-span-7" data-reveal>
+          <span class="kicker">001 · Contexte</span>
+          <h2 id="titre-contexte" class="titre-1 mt-6">Chaque jour, des millions de demandes à des IA.</h2>
+          <p class="mt-6 font-display text-[26px] font-extralight uppercase leading-tight text-roi">Personne ne sait ce qu'elles consomment.</p>
+          <p class="mt-8 max-w-xl text-doux">
+            Reformuler un mail, expliquer un cours, corriger du code&nbsp;: chaque réponse est écrite token par token.
+            Voici les ordres de grandeur, estimés à partir de {nombre(source.conversations_fr)} conversations en français.
+          </p>
+          <ul class="mt-10 flex flex-wrap gap-4" aria-label="Chiffres clés">
+            <li><Chip><span class="chiffre">{wh(conversation.wh_median)}</span> pour une conversation médiane</Chip></li>
+            <li><Chip>1 Wh = LED 10 W pendant 6 min</Chip></li>
+            <li><Chip><span class="chiffre">{tokens(conversation.tokens_median)}</span> tokens par réponse</Chip></li>
+          </ul>
+          <p class="mt-6 font-mono text-[13px] text-doux">
+            {wh(conversation.wh_median)} ≈ une ampoule LED de 10 W allumée {minutesLED(conversation.wh_median)}.
+          </p>
+        </div>
+        <div class="col-span-5 min-h-[420px]" data-jeton-cible></div>
+      </div>
+    </section>
+
+    <section id="exploration" data-jeton="59-59" data-jeton-mode="colonne" class="flex min-h-screen items-center py-28" aria-labelledby="titre-exploration">
+      <div class="conteneur grid grid-cols-12 gap-10">
+        <div class="col-span-7">
+          <div data-reveal>
+            <span class="kicker">002 · Exploration</span>
+            <h2 id="titre-exploration" class="titre-2 mt-6">Combien consomme une conversation&nbsp;?</h2>
+            <p class="mt-4 font-display text-[22px] font-extralight uppercase leading-tight text-roi">
+              Près de 2 conversations sur 3 consomment moins de 1&nbsp;Wh.
+            </p>
+          </div>
+          <Figure
+            class="mt-10"
+            remplir
+            titre="Électricité d'une conversation, par tranche"
+            sousTitre={`${pourcent(conversation.part_moins_1wh)} des conversations restent sous 1 Wh`}
+            svg={svgTranches}
+            alt={`Diagramme en barres horizontales. Il compare la part des conversations dans trois tranches d'électricité consommée. La grande majorité des conversations consomme moins de 1 Wh. Moins de 1 Wh : ${pourcent(tranches[0].part)} ; de 1 à 10 Wh : ${pourcent(tranches[1].part)} ; plus de 10 Wh : ${pourcent(tranches[2].part)}.`}
+            source={`Source : Compar:IA, estimation EcoLogits · échantillon fixe de ${nombre(conversation.echantillon)} conversations`}
+          />
+          <aside class="mt-6 rounded-[20px] border border-trait bg-glace p-6" data-reveal>
+            <p class="font-mono text-[12px] uppercase tracking-[0.14em] text-roi">La moyenne ment</p>
+            <p class="mt-2">
+              Médiane <strong class="chiffre">{wh(conversation.wh_median)}</strong>, moyenne <strong class="chiffre">{wh(conversation.wh_moyen)}</strong>&nbsp;:
+              la moyenne est {rapport} fois plus haute, tirée par quelques conversations extrêmes (jusqu'à {nombre(conversation.wh_max, 0)}&nbsp;Wh).
+              Le site affiche toujours la médiane.
+            </p>
+          </aside>
+        </div>
+        <div class="col-span-5" data-jeton-cible></div>
+      </div>
+    </section>
+
+    <section id="revelation" data-jeton="60-89" data-jeton-mode="colonne" class="sombre flex min-h-screen items-center bg-navy py-28 text-white" aria-labelledby="titre-revelation">
+      <div class="conteneur grid grid-cols-12 gap-10">
+        <div class="col-span-8">
+          <div data-reveal>
+            <span class="kicker">003 · Révélation</span>
+            <h2 id="titre-revelation" class="titre-2 mt-6">Écrire plus, ou coûter plus par token&nbsp;?</h2>
+            <p class="mt-4 font-display text-[22px] font-extralight uppercase leading-tight text-ciel">
+              1 000 tokens coûtent {principale.ecart} fois plus à un grand modèle.
+            </p>
+            <p class="mt-4 max-w-2xl text-glace">
+              Pour une même demande, catégorie la plus fréquente&nbsp;: <strong>{principale.nom.toLowerCase()}</strong>. Modèles regroupés par taille.
+            </p>
+          </div>
+          <div class="mt-10 grid grid-cols-2 gap-6">
+            <Figure
+              sombre
+              remplir
+              titre="Combien de tokens écrit une réponse ?"
+              sousTitre={cat.phrase_longueur}
+              svg={svgLongueur}
+              alt={cat.alt_longueur}
+              source="Source : Compar:IA · médiane des modèles de chaque taille (≥ 100 conversations)"
+            />
+            <Figure
+              sombre
+              remplir
+              titre="Combien d'électricité pour 1 000 tokens ?"
+              sousTitre={cat.phrase}
+              svg={svgCout}
+              alt={cat.alt}
+              source="Source : Compar:IA, estimation EcoLogits · médiane des modèles de chaque taille"
+            />
+          </div>
+          <a href={`/demandes/${principale.slug}`} class="btn btn-lg mt-8 rounded-full border-0 bg-white px-8 text-navy hover:bg-glace">
+            Voir pour ta demande <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div class="col-span-4" data-jeton-cible></div>
+      </div>
+    </section>
+
+    <!-- 004 · CONCLUSION (bloc navy, le Jeton déborde de l'encoche) -->
+    <section id="conclusion" data-jeton="90-119" class="pb-28 pt-56" aria-labelledby="titre-conclusion">
+      <div class="conteneur">
+        <div class="bloc-navy encoche sombre relative px-16 pb-14 pt-20">
+          <div class="pointer-events-none absolute right-[20px] top-0 aspect-square w-[520px] -translate-y-[55%]" data-jeton-cible aria-hidden="true"></div>
+          <div class="max-w-2xl" data-reveal>
+            <span class="kicker">004 · Conclusion</span>
+            <h2 id="titre-conclusion" class="titre-2 mt-6">Choisir son modèle selon sa demande.</h2>
+            <p class="mt-6 font-display text-[20px] font-extralight uppercase leading-snug text-ciel">
+              Pour une demande simple, un petit modèle répond aussi longuement… pour environ {Math.round(chiffres.ensemble.ecart / 10) * 10} fois moins d'électricité par token.
+            </p>
+          </div>
+          <h3 class="mt-14 font-mono text-[13px] font-normal tracking-[0.14em] text-ciel">LES 5 TYPES DE DEMANDE LES PLUS FRÉQUENTS</h3>
+          <ol class="mt-4">
+            {
+              top5.map((c) => (
+                <LigneNumerotee
+                  rang={c.rang}
+                  href={`/demandes/${c.slug}`}
+                  titre={c.nom}
+                  sousTitre={c.categorie}
+                  detail={`${nombre(c.conversations)} conv.`}
+                  meta={c.ecart != null ? `× ${c.ecart} par token` : "écart inconnu"}
+                />
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </section>
+  </Jeton>
+
+  <section id="source" class="pb-32" aria-labelledby="titre-source">
+    <div class="conteneur">
+      <div class="carte grid grid-cols-12 items-center gap-10 p-12">
+        <div class="col-span-7">
+          <h2 id="titre-source" class="titre-2">Cite ta source, donne ta méthode, publie tes données.</h2>
+        </div>
+        <div class="col-span-5">
+          <p>
+            <strong>{source.nom}</strong> ({source.producteur}, data.gouv.fr) · {source.licence} · mise à jour du {source.date}.
+            Électricité estimée par EcoLogits (inférence + fabrication des GPU, pas l'entraînement).
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode <span aria-hidden="true">→</span></a>
+            <a href="/methode#telechargements" class="btn btn-accent rounded-full px-6">Télécharger les données</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .encoche::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 140px;
+    width: 280px;
+    height: 280px;
+    border-radius: 9999px;
+    background: var(--color-base-100);
+    translate: 0 -62%;
+  }
+</style>
+
+<script>
+  import "../scripts/reveal";
+</script>

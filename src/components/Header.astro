@@ -1,0 +1,71 @@
+---
+interface Props {
+  sombre?: boolean;
+}
+const { sombre = false } = Astro.props;
+const liens = [
+  { href: "/demandes", texte: "Demandes" },
+  { href: "/modeles", texte: "Modèles" },
+  { href: "/methode", texte: "Méthode" },
+  { href: "/a-propos", texte: "À propos" },
+];
+const chemin = Astro.url.pathname.replace(/\/$/, "");
+const actif = (href: string) => chemin === href || chemin.startsWith(href + "/");
+---
+
+<header
+  id="entete"
+  data-sombre={sombre ? "" : undefined}
+  class:list={[
+    "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+    sombre ? "text-white" : "text-navy",
+  ]}
+>
+  <nav class="navbar conteneur min-h-20" aria-label="Navigation principale">
+    <div class="navbar-start">
+      <a href="/" class="flex items-center gap-2 font-display text-[17px] font-semibold tracking-wide" aria-label="TOKENWATT, accueil">
+        <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 30 16 16 30 2 16Z" fill="#1E5BD8" /><path d="M16 2 30 16H2Z" fill="#5B8DEF" /></svg>
+        TOKENWATT
+      </a>
+    </div>
+    <div class="navbar-center">
+      <ul class="flex items-center gap-10 text-[16px] font-semibold">
+        {
+          liens.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                aria-current={actif(l.href) ? "page" : undefined}
+                class:list={[
+                  "border-b-2 pb-1 transition-colors",
+                  actif(l.href) ? "border-current" : "border-transparent hover:border-ciel",
+                ]}
+              >
+                {l.texte}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="navbar-end">
+      <a href="/demandes" class="btn btn-primary rounded-full px-6">Compare ta demande <span aria-hidden="true">→</span></a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  #entete.defile {
+    background: rgb(255 255 255 / 0.88);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--color-trait);
+    color: var(--color-navy);
+  }
+</style>
+
+<script>
+  const entete = document.getElementById("entete")!;
+  const maj = () => entete.classList.toggle("defile", scrollY > 40);
+  maj();
+  addEventListener("scroll", maj, { passive: true });
+</script>

@@ -1,0 +1,58 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  titre: string;
+  description?: string;
+  sombre?: boolean;
+}
+
+const {
+  titre,
+  description = "Pour une même demande, combien d'électricité chaque modèle d'IA consomme-t-il ? Données ouvertes Compar:IA, estimation EcoLogits.",
+  sombre = false,
+} = Astro.props;
+const titreComplet = titre === "TOKENWATT" ? "TOKENWATT · Ce que coûte vraiment une réponse d'IA" : `${titre} · TOKENWATT`;
+const image = new URL("/og-jeton.png", Astro.site);
+const canonique = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="fr" data-theme="tokenwatt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonique} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="TOKENWATT" />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Le Jeton : prisme hexagonal bleu avec un éclair jaune au cœur" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0A1F44" />
+    <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-unbounded" preload />
+    <Font cssVariable="--font-manrope" preload />
+    <Font cssVariable="--font-jetbrains" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <slot name="head" />
+  </head>
+  <body class:list={[sombre && "sombre bg-navy text-white"]}>
+    <a href="#contenu" class="btn btn-primary fixed left-4 top-4 z-[100] -translate-y-24 focus:translate-y-0">Aller au contenu</a>
+    <Header sombre={sombre} />
+    <main id="contenu" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

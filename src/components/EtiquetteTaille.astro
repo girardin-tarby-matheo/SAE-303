@@ -1,0 +1,16 @@
+---
+import type { Taille } from "../lib/types";
+interface Props {
+  taille: Taille;
+  class?: string;
+}
+const { taille, class: classe } = Astro.props;
+const styles: Record<Taille, string> = {
+  petit: "bg-ciel text-navy",
+  moyen: "bg-moyen text-navy",
+  grand: "bg-navy text-white",
+  inconnue: "bg-inconnu text-navy",
+};
+---
+
+<span class:list={["badge badge-outline border-0 px-3 font-bold", styles[taille], classe]}>{taille}</span>

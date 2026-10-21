@@ -1,0 +1,386 @@
+---
+// /methode : sources, ce qui est mesuré ou pas, nettoyage, choix, limites, téléchargements (route A)
+import Base from "../layouts/Base.astro";
+import { nombre, wh, pourcent } from "../lib/format";
+import chiffres from "../data/chiffres.json";
+
+const { source, conversation, modeles, controles } = chiffres;
+const fichiers = [
+    { nom: "chiffres.json", role: "Chiffres clés, contrôles avant / après" },
+    { nom: "tranches.json", role: "Conversations par tranche d'électricité" },
+    {
+        nom: "categories.json",
+        role: "Par type de demande et par taille, avec les modèles",
+    },
+    { nom: "modeles.json", role: "Fiche de chaque modèle, par catégorie" },
+];
+---
+
+<Base
+    titre="Méthode"
+    description="Sources, méthode d'estimation, nettoyage, choix et limites des chiffres de TOKENWATT. Données téléchargeables."
+>
+    <section class="relative overflow-hidden pb-16 pt-40">
+        <p class="mot-geant absolute -right-10 top-24" aria-hidden="true">
+            MÉTHODE
+        </p>
+        <div class="conteneur relative">
+            <span class="kicker">Pages de confiance</span>
+            <h1 class="titre-1 mt-6 max-w-5xl">
+                Cite ta source,<span class="titre-fin"
+                    >donne ta méthode, publie tes données</span>
+            </h1>
+            <p class="mt-6 max-w-2xl text-[19px] text-doux">
+                Tous les chiffres du site sont <strong class="text-navy"
+                    >estimés</strong
+                >, jamais mesurés. Voici d'où ils viennent, comment ils ont été
+                calculés et ce qu'ils ne disent pas.
+            </p>
+        </div>
+    </section>
+
+    <section class="pb-24">
+        <div class="conteneur grid grid-cols-12 gap-12">
+            <nav class="col-span-3" aria-label="Sommaire de la méthode">
+                <ol class="sticky top-28 space-y-3 font-mono text-[14px]">
+                    <li>
+                        <a class="hover:text-roi" href="#sources"
+                            >001 · Les sources</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#mesure"
+                            >002 · Ce qui est mesuré… ou pas</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#nettoyage"
+                            >003 · Le nettoyage</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#choix"
+                            >004 · Les choix</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#limites"
+                            >005 · Les limites</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#telechargements"
+                            >Téléchargements</a>
+                    </li>
+                    <li>
+                        <a class="hover:text-roi" href="#sobriete"
+                            >Poids du site</a>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="col-span-9 space-y-6">
+                <article id="sources" class="carte p-10">
+                    <span class="numero text-roi">001</span>
+                    <h2 class="titre-2 mt-5">Les sources</h2>
+                    <div class="mt-6 overflow-x-auto">
+                        <table class="table text-[15px]">
+                            <thead>
+                                <tr
+                                    class="font-mono text-[12px] uppercase text-roi"
+                                    ><th scope="col">Source</th><th scope="col"
+                                        >Contenu utilisé</th
+                                    ><th scope="col">Licence · date</th></tr
+                                >
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row"
+                                        ><a class="underline" href={source.url}
+                                            >{source.nom}</a
+                                        ><span
+                                            class="block font-normal text-doux"
+                                            >{source.producteur}, data.gouv.fr</span
+                                        ></th
+                                    >
+                                    <td
+                                        >{nombre(source.conversations_total)} conversations,
+                                        dont <strong
+                                            >{nombre(source.conversations_fr)} en
+                                            français</strong
+                                        > ({pourcent(source.part_fr)}). Pour
+                                        chaque réponse&nbsp;: modèle, tokens
+                                        produits, électricité estimée, catégorie
+                                        de demande.</td
+                                    >
+                                    <td
+                                        >{source.licence} · mise à jour du {
+                                            source.date
+                                        }</td
+                                    >
+                                </tr>
+                                <tr>
+                                    <th scope="row"
+                                        ><a
+                                            class="underline"
+                                            href="https://ecologits.ai"
+                                            >EcoLogits</a
+                                        ><span
+                                            class="block font-normal text-doux"
+                                            >méthode d'estimation</span
+                                        ></th
+                                    >
+                                    <td
+                                        >Électricité estimée à partir des
+                                        paramètres actifs du modèle et des
+                                        tokens produits, calibrée sur ML.ENERGY,
+                                        multipliée par le PUE du centre de
+                                        données.</td
+                                    >
+                                    <td
+                                        >Méthode publique, utilisée par
+                                        Compar:IA</td
+                                    >
+                                </tr>
+                                <tr>
+                                    <th scope="row"
+                                        >Ember via Our World in Data</th
+                                    >
+                                    <td
+                                        >Intensité carbone de l'électricité par
+                                        pays (cycle de vie)&nbsp;: chargée et
+                                        contrôlée dans le notebook, réservée à
+                                        une future section CO₂ (non affichée).</td
+                                    >
+                                    <td>CC-BY-4.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article id="mesure" class="carte p-10">
+                    <span class="numero text-roi">002</span>
+                    <h2 class="titre-2 mt-5">Ce qui est mesuré… ou pas</h2>
+                    <ul class="mt-6 list-disc space-y-3 pl-5 marker:text-roi">
+                        <li>
+                            C'est une <strong>estimation</strong>, pas une
+                            mesure&nbsp;: aucun compteur n'a été branché sur un
+                            serveur. Les chiffres sont des ordres de grandeur,
+                            fiables pour comparer les modèles entre eux.
+                        </li>
+                        <li>
+                            Sont comptées l'<strong>inférence</strong> (produire la
+                            réponse) et la <strong>fabrication des GPU</strong>.
+                            L'<strong>entraînement</strong> des modèles n'est pas
+                            compté.
+                        </li>
+                        <li>
+                            Pour les modèles dont la taille n'est pas publiée ({
+                                modeles.sans_params
+                            } sur {modeles.total}, {
+                                pourcent(modeles.part_conv_sans_params)
+                            } des conversations), l'énergie est une <strong
+                                >fourchette</strong
+                            >.
+                        </li>
+                        <li>
+                            Repère utilisé partout&nbsp;: 1&nbsp;Wh = une
+                            ampoule LED de 10&nbsp;W allumée 6&nbsp;minutes
+                            (10&nbsp;W × 0,1&nbsp;h).
+                        </li>
+                    </ul>
+                </article>
+
+                <article id="nettoyage" class="carte p-10">
+                    <span class="numero text-roi">003</span>
+                    <h2 class="titre-2 mt-5">Le nettoyage</h2>
+                    <ul class="mt-6 list-disc space-y-3 pl-5 marker:text-roi">
+                        <li>
+                            Conversations <strong>en français</strong> uniquement
+                            (le public visé).
+                        </li>
+                        <li>
+                            Un modèle n'apparaît que s'il a <strong
+                                >au moins {modeles.seuil_conversations} conversations</strong
+                            >&nbsp;: {modeles.retenus} modèles retenus.
+                        </li>
+                        <li>Lignes à 0 token ou 0 Wh écartées.</li>
+                        <li>
+                            Taille d'un modèle selon ses paramètres
+                            actifs&nbsp;: petit &lt; 15 milliards, moyen &lt;
+                            70, grand au-delà, inconnue si non publiée.
+                        </li>
+                    </ul>
+                    <h3
+                        class="mt-8 font-mono text-[13px] font-normal tracking-[0.12em] text-roi"
+                    >
+                        CONTRÔLES AVANT / APRÈS
+                    </h3>
+                    <table class="table mt-3 text-[15px]">
+                        <thead
+                            ><tr class="font-mono text-[12px] uppercase"
+                                ><th scope="col">Table</th><th
+                                    scope="col"
+                                    class="text-right">Avant</th
+                                ><th scope="col" class="text-right">Après</th
+                                ></tr
+                            ></thead
+                        >
+                        <tbody class="chiffre">
+                            <tr
+                                ><th scope="row" class="font-sans"
+                                    >Modèles (énergie)</th
+                                ><td class="text-right"
+                                    >{nombre(controles.energie.avant)}</td
+                                ><td class="text-right"
+                                    >{nombre(controles.energie.apres)}</td
+                                ></tr
+                            >
+                            <tr
+                                ><th scope="row" class="font-sans"
+                                    >Lignes modèle × catégorie</th
+                                ><td class="text-right"
+                                    >{nombre(controles.tokens.avant)}</td
+                                ><td class="text-right"
+                                    >{nombre(controles.tokens.apres)}</td
+                                ></tr
+                            >
+                            <tr
+                                ><th scope="row" class="font-sans"
+                                    >Échantillon de conversations</th
+                                ><td class="text-right"
+                                    >{nombre(controles.echantillon.avant)}</td
+                                ><td class="text-right"
+                                    >{nombre(controles.echantillon.apres)}</td
+                                ></tr
+                            >
+                        </tbody>
+                    </table>
+                </article>
+
+                <article id="choix" class="carte p-10">
+                    <span class="numero text-roi">004</span>
+                    <h2 class="titre-2 mt-5">Les choix</h2>
+                    <ul class="mt-6 list-disc space-y-3 pl-5 marker:text-roi">
+                        <li>
+                            <strong>Médiane plutôt que moyenne</strong>&nbsp;:
+                            sur l'échantillon, la médiane est de {
+                                wh(conversation.wh_median)
+                            } et la moyenne de {wh(conversation.wh_moyen)}, soit {
+                                nombre(conversation.rapport_moyenne_mediane, 0)
+                            } fois plus, tirée par quelques conversations extrêmes
+                            (jusqu'à {nombre(conversation.wh_max, 0)}&nbsp;Wh).
+                        </li>
+                        <li>
+                            <strong>Jamais de totaux</strong>&nbsp;: un total
+                            mesure la popularité d'un modèle, pas sa sobriété.
+                            On compare par conversation ou pour 1 000 tokens.
+                        </li>
+                        <li>
+                            <strong>Taille en 3 classes</strong> (+ inconnue), codée
+                            du clair au foncé&nbsp;: c'est une variable ordinale.
+                        </li>
+                        <li>
+                            Par catégorie, chaque taille est résumée par la <strong
+                                >médiane des modèles</strong
+                            > de cette taille.
+                        </li>
+                        <li>
+                            «&nbsp;Tokens par réponse&nbsp;» d'une fiche
+                            modèle&nbsp;: médiane des médianes par catégorie,
+                            pondérée par le nombre de conversations
+                            (approximation).
+                        </li>
+                        <li>
+                            Barres sur un axe commun partant de zéro, échelle
+                            normale, valeurs écrites sur les barres&nbsp;: pas
+                            d'infobulle, pas d'échelle logarithmique, pas de 3D
+                            dans les graphiques.
+                        </li>
+                    </ul>
+                </article>
+
+                <article id="limites" class="carte p-10">
+                    <span class="numero text-roi">005</span>
+                    <h2 class="titre-2 mt-5">Les limites</h2>
+                    <ul class="mt-6 list-disc space-y-3 pl-5 marker:text-roi">
+                        <li>
+                            La distribution (tranches, médiane d'une
+                            conversation) vient d'un <strong
+                                >échantillon fixe de {
+                                    nombre(conversation.echantillon)
+                                } conversations</strong
+                            >, et d'un seul côté du duel Compar:IA.
+                        </li>
+                        <li>
+                            Les <strong>catégories</strong> sont attribuées par Compar:IA,
+                            pas par nous.
+                        </li>
+                        <li>
+                            Les «&nbsp;conversations&nbsp;» comptées par
+                            catégorie et par modèle sont des réponses de
+                            modèles&nbsp;: une même conversation de duel compte
+                            pour deux modèles.
+                        </li>
+                        <li>
+                            Compar:IA n'est pas un usage réel moyen&nbsp;: ce
+                            sont des personnes qui comparent volontairement deux
+                            modèles.
+                        </li>
+                    </ul>
+                </article>
+
+                <article id="telechargements" class="carte p-10">
+                    <h2 class="titre-2">Téléchargements</h2>
+                    <p class="mt-4 text-doux">
+                        Les fichiers JSON exacts utilisés pour construire le
+                        site (2 décimales, <code>null</code> si inconnu, nombre de
+                        conversations toujours fourni).
+                    </p>
+                    <ul class="mt-8 space-y-4">
+                        {
+                            fichiers.map((f) => (
+                                <li class="flex items-center justify-between gap-6 border-b border-trait pb-4">
+                                    <span>
+                                        <span class="block font-mono font-semibold">
+                                            {f.nom}
+                                        </span>
+                                        <span class="text-[15px] text-doux">
+                                            {f.role}
+                                        </span>
+                                    </span>
+                                    <a
+                                        href={`/donnees/${f.nom}`}
+                                        download
+                                        class="btn btn-accent rounded-full px-6"
+                                    >
+                                        Télécharger{" "}
+                                        <span class="sr-only">{f.nom}</span>
+                                    </a>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                    <p class="mt-6 text-[15px]">
+                        Analyse complète&nbsp;: <a
+                            class="font-semibold underline"
+                            href="https://observablehq.com/@mmi-montbeliard/sae-303-gr-03"
+                            >notebook Observable SAÉ 303 · groupe 03</a
+                        >.
+                    </p>
+                </article>
+
+                <article id="sobriete" class="bloc-navy sombre p-10">
+                    <h2 class="titre-2">
+                        Un site sur la sobriété doit être sobre
+                    </h2>
+                    <p class="mt-4 text-glace">
+                        Poids total de la page d'accueil (HTML, CSS, JavaScript,
+                        polices, séquence 3D)&nbsp;:
+                        <strong class="chiffre text-white" data-poids-accueil
+                            >calculé à la construction du site</strong
+                        >. Les graphiques sont rendus à la construction du
+                        site&nbsp;: aucun JavaScript n'est envoyé pour les
+                        dessiner.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+</Base>

@@ -1,0 +1,208 @@
+---
+// /modeles/[slug] : route C, une fiche statique par modèle
+import Base from "../../layouts/Base.astro";
+import Figure from "../../components/Figure.astro";
+import CarteCompteur from "../../components/CarteCompteur.astro";
+import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
+import { barresCategoriesModele } from "../../lib/graphiques";
+import { documentBuild } from "../../lib/dom";
+import { nombre, wh, tokens, pourcent, minutesLED } from "../../lib/format";
+import type { Modele } from "../../lib/types";
+import modelesJson from "../../data/modeles.json";
+import chiffres from "../../data/chiffres.json";
+
+export function getStaticPaths() {
+  const modeles = modelesJson as Modele[];
+  return modeles.map((m, i) => ({
+    params: { slug: m.slug },
+    props: { m, precedent: modeles[i - 1] ?? null, suivant: modeles[i + 1] ?? null },
+  }));
+}
+
+const { m, precedent, suivant } = Astro.props as { m: Modele; precedent: Modele | null; suivant: Modele | null };
+const reference = chiffres.modeles.wh_1000_tokens_median;
+const document = documentBuild();
+const svg = m.parCategorie.length
+  ? barresCategoriesModele(m.parCategorie, {
+      reference, taille: m.taille, document, width: 1040,
+      label: `Wh pour 1 000 tokens de ${m.modele}, par type de demande`,
+    }).outerHTML
+  : null;
+const tri = m.parCategorie.toSorted((a, b) => (b.wh_1000_tokens ?? 0) - (a.wh_1000_tokens ?? 0));
+const auDessus = m.wh_1000_tokens != null && m.wh_1000_tokens > reference;
+// EcoLogits estime un coût par token propre au modèle : il est souvent identique dans toutes les catégories
+const valeursCat = [...new Set(m.parCategorie.map((d) => d.wh_1000_tokens))];
+const constant = valeursCat.length === 1;
+const comparaison = `${auDessus ? "plus" : "moins"} que la médiane des modèles (${wh(reference)})`;
+const sousTitre = constant
+  ? `1 000 tokens coûtent ${wh(valeursCat[0])} quelle que soit la demande, ${comparaison} : le coût par token dépend du modèle, pas de la demande`
+  : `${m.modele} consomme ${comparaison} par token`;
+const altValeurs = constant
+  ? `Toutes les catégories : ${wh(valeursCat[0])}.`
+  : `${tri.map((d) => `${d.nom} : ${wh(d.wh_1000_tokens)}`).join(" ; ")}.`;
+const parConv = m.parCategorie.toSorted((a, b) => (b.wh_median_conv ?? 0) - (a.wh_median_conv ?? 0));
+---
+
+<Base titre={m.modele} description={`${m.modele} : ${wh(m.wh_median_conv)} par conversation (médiane), ${wh(m.wh_1000_tokens)} pour 1 000 tokens. Données Compar:IA, estimation EcoLogits.`}>
+  <section class="pb-12 pt-36">
+    <div class="conteneur">
+      <nav class="breadcrumbs font-mono text-[13px]" aria-label="Fil d'Ariane">
+        <ul>
+          <li><a href="/">Accueil</a></li>
+          <li><a href="/modeles">Modèles</a></li>
+          <li aria-current="page">{m.modele}</li>
+        </ul>
+      </nav>
+      <div class="mt-10 flex items-end justify-between gap-8">
+        <div>
+          <span class="kicker">Fiche modèle · n° {String(m.rang).padStart(3, "0")} sur {chiffres.modeles.retenus}</span>
+          <h1 class="mt-6 break-all font-display text-[clamp(40px,4vw,60px)]">{m.modele}</h1>
+          <p class="mt-4 flex items-center gap-4 font-mono text-[14px]">
+            <EtiquetteTaille taille={m.taille} class="badge-lg" />
+            <span>{m.params_actifs != null ? `${nombre(m.params_actifs)} milliards de paramètres actifs` : "paramètres actifs non publiés"}</span>
+            <span class="text-doux">· {nombre(m.n_conv)} conversations</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-12 grid grid-cols-12 gap-6">
+        <CarteCompteur
+          class="col-span-5"
+          etiquette={`${m.modele} · ${m.taille}`}
+          valeur={m.wh_median_conv}
+          legende="par conversation (médiane)"
+          repere
+        />
+        <div class="carte col-span-4 flex flex-col justify-between p-7">
+          <div>
+            <p class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">Pour 1 000 tokens</p>
+            <p class="mt-2 font-display text-[36px] font-semibold">{wh(m.wh_1000_tokens)}</p>
+            <p class="font-mono text-[12px] text-doux">≈ {minutesLED(m.wh_1000_tokens)} d'ampoule LED 10 W</p>
+          </div>
+          <div class="mt-6 border-t border-trait pt-4">
+            <p class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">Tokens par réponse</p>
+            <p class="mt-1 font-display text-[28px] font-semibold">{tokens(m.tokens_median)}</p>
+            <p class="font-mono text-[12px] text-doux">médiane, toutes catégories</p>
+          </div>
+        </div>
+        <div class="col-span-3 flex flex-col justify-center rounded-[20px] border border-dashed border-moyen bg-glace p-7">
+          <p class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">Position</p>
+          <p class="mt-3 text-[19px] leading-snug">
+            Plus sobre que <strong class="font-display text-[34px]">{pourcent(m.plus_sobre_que)}</strong> des modèles retenus
+          </p>
+          <p class="mt-2 font-mono text-[12px] text-doux">selon les Wh par conversation</p>
+        </div>
+      </div>
+
+      {
+        m.taille === "inconnue" && (
+          <div role="note" class="mt-6 flex gap-5 rounded-[20px] border border-trait bg-white p-7 shadow-bleu">
+            <span class="flex size-10 flex-none items-center justify-center rounded-full bg-roi font-bold text-white" aria-hidden="true">!</span>
+            <div>
+              <p class="font-bold">Modèle fermé&nbsp;: énergie estimée par fourchette</p>
+              <p class="mt-1 text-doux">
+                Sa taille (paramètres actifs) n'est pas publiée. EcoLogits estime alors l'électricité par une fourchette&nbsp;:
+                les chiffres de cette fiche sont un ordre de grandeur moins précis que pour les modèles ouverts.
+              </p>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="pb-12" aria-label="Par type de demande">
+    <div class="conteneur">
+      {
+        svg ? (
+          <Figure
+            titre={`Électricité de ${m.modele} pour 1 000 tokens, par type de demande`}
+            sousTitre={sousTitre}
+            svg={svg}
+            alt={`Diagramme en barres horizontales. Il compare l'électricité consommée par ${m.modele} pour 1 000 tokens dans chaque type de demande où il a au moins 100 conversations, avec en référence la médiane de tous les modèles (${wh(reference)}). ${constant ? "Le coût par token est le même dans toutes les catégories, " : "Le modèle se situe "}${auDessus ? "au-dessus de la médiane." : "sous la médiane."} ${altValeurs}`}
+            source="Source : Compar:IA, estimation EcoLogits · catégories où le modèle a au moins 100 conversations · ligne pointillée = médiane de tous les modèles retenus"
+          />
+        ) : (
+          <p class="carte p-8 text-doux">
+            Ce modèle n'a au moins 100 conversations dans aucun type de demande&nbsp;: pas de détail par catégorie.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    parConv.length > 0 && (
+      <section class="pb-12" aria-labelledby="titre-chiffres-categorie">
+        <div class="conteneur">
+          <div class="carte p-10">
+            <h2 id="titre-chiffres-categorie" class="text-[22px]">Chiffres par type de demande</h2>
+            <p class="mt-2 text-doux">
+              Ce qui change d'une demande à l'autre, c'est la longueur des réponses, donc l'électricité d'une conversation.
+              Clique sur une demande pour comparer tous les modèles.
+            </p>
+            <div class="mt-6 overflow-x-auto rounded-[12px] border border-trait">
+              <table class="table text-[14px]">
+                <caption class="sr-only">Chiffres de {m.modele} par type de demande, triés par Wh par conversation</caption>
+                <thead>
+                  <tr class="bg-glace font-mono text-[12px] uppercase text-navy">
+                    <th scope="col">Type de demande</th>
+                    <th scope="col" class="text-right">Conversations</th>
+                    <th scope="col" class="text-right">Tokens / réponse</th>
+                    <th scope="col" class="text-right">Wh / 1 000 tokens</th>
+                    <th scope="col" class="text-right">Wh / conversation</th>
+                  </tr>
+                </thead>
+                <tbody class="chiffre">
+                  {parConv.map((d) => (
+                    <tr class="hover:bg-glace">
+                      <th scope="row" class="font-sans font-semibold">
+                        {d.slug ? <a class="underline-offset-4 hover:underline" href={`/demandes/${d.slug}`}>{d.nom}</a> : d.nom}
+                      </th>
+                      <td class="text-right">{nombre(d.n_conv)}</td>
+                      <td class="text-right">{tokens(d.tokens_median)}</td>
+                      <td class="text-right">{wh(d.wh_1000_tokens, false)}</td>
+                      <td class="text-right font-semibold">{wh(d.wh_median_conv, false)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="pb-32" aria-label="Navigation dans le classement">
+    <div class="conteneur grid grid-cols-2 gap-6">
+      {
+        precedent ? (
+          <a href={`/modeles/${precedent.slug}`} class="ligne carte flex items-center gap-5 p-7 hover:border-moyen">
+            <span class="fleche-ronde" aria-hidden="true">←</span>
+            <span>
+              <span class="block font-mono text-[12px] uppercase tracking-[0.12em] text-roi">Plus sobre</span>
+              <span class="font-display text-[18px] font-semibold">{precedent.modele}</span>
+              <span class="block font-mono text-[13px] text-doux">{wh(precedent.wh_median_conv)} / conversation</span>
+            </span>
+          </a>
+        ) : <span />
+      }
+      {
+        suivant && (
+          <a href={`/modeles/${suivant.slug}`} class="ligne carte flex items-center justify-end gap-5 p-7 text-right hover:border-moyen">
+            <span>
+              <span class="block font-mono text-[12px] uppercase tracking-[0.12em] text-roi">Plus gourmand</span>
+              <span class="font-display text-[18px] font-semibold">{suivant.modele}</span>
+              <span class="block font-mono text-[13px] text-doux">{wh(suivant.wh_median_conv)} / conversation</span>
+            </span>
+            <span class="fleche-ronde" aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </div>
+    <div class="conteneur mt-6">
+      <a href="/modeles" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Tout le classement <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>

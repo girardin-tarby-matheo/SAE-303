@@ -1,0 +1,273 @@
+---
+// /modeles : classement de tous les modèles retenus (route A), filtrable par taille (route B légère :
+// on masque des lignes déjà rendues au build, on ne redessine rien).
+import Base from "../../layouts/Base.astro";
+import Figure from "../../components/Figure.astro";
+import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
+import { barreModele, axeClassement } from "../../lib/graphiques";
+import { documentBuild } from "../../lib/dom";
+import { nombre, wh, tokens } from "../../lib/format";
+import type { Modele } from "../../lib/types";
+import modelesJson from "../../data/modeles.json";
+import chiffres from "../../data/chiffres.json";
+
+const modeles = modelesJson as Modele[];
+const document = documentBuild();
+// Échelle commune partant de zéro. Une valeur extrême (plus du double de la suivante) écraserait
+// toutes les autres barres : elle est alors dessinée coupée, valeur exacte écrite, et signalée sous le graphique.
+const valeurs = modeles
+    .map((m) => m.wh_median_conv ?? 0)
+    .toSorted((a, b) => b - a);
+const extreme = valeurs[0] > 2 * valeurs[1];
+const max = Math.ceil((extreme ? valeurs[1] : valeurs[0]) / 10) * 10;
+const horsEchelle = modeles.filter((m) => (m.wh_median_conv ?? 0) > max);
+const LARGEUR = 820;
+const lignes = modeles.map((m) => ({
+    m,
+    svg: barreModele(m, { max, document, width: LARGEUR }).outerHTML,
+}));
+const axe = axeClassement({
+    max,
+    label: "Wh par conversation (médiane) →",
+    document,
+    width: LARGEUR,
+}).outerHTML;
+const sobre = modeles[0],
+    gourmand = modeles.at(-1)!;
+const TAILLES = ["tous", "petit", "moyen", "grand", "inconnue"] as const;
+const parTaille = (t: string) =>
+    modeles.filter((m) => t === "tous" || m.taille === t).length;
+---
+
+<Base
+    titre="Classement des modèles"
+    description="Les modèles d'IA classés du plus sobre au plus gourmand : électricité d'une conversation typique, données Compar:IA."
+>
+    <section class="relative overflow-hidden pb-14 pt-40">
+        <p class="mot-geant absolute -right-16 top-24" aria-hidden="true">
+            MODÈLES
+        </p>
+        <div class="conteneur relative">
+            <span class="kicker"
+                >Classement · {modeles.length} modèles retenus</span
+            >
+            <h1 class="titre-1 mt-6 max-w-5xl">
+                Les modèles, du plus sobre au plus gourmand
+            </h1>
+            <p class="mt-6 max-w-2xl text-[19px] text-doux">
+                Électricité d'une conversation typique (médiane des Wh par
+                conversation), pour chaque modèle ayant au moins {
+                    chiffres.modeles.seuil_conversations
+                } conversations en français.
+            </p>
+            <p
+                class="mt-6 inline-flex items-center gap-3 rounded-full border border-trait bg-white px-5 py-3 text-[15px] font-semibold shadow-bleu"
+            >
+                <span class="size-2.5 rounded-full bg-roi" aria-hidden="true"
+                ></span>
+                On ne compare pas des totaux&nbsp;: un total mesure la popularité,
+                pas la sobriété.
+            </p>
+        </div>
+    </section>
+
+    <section class="pb-12" aria-label="Classement">
+        <div class="conteneur">
+            <div
+                data-filtre-zone
+                hidden
+                class="mb-6 flex items-center justify-between"
+            >
+                <div
+                    class="join"
+                    role="group"
+                    aria-label="Filtrer par taille de modèle"
+                >
+                    {
+                        TAILLES.map((t) => (
+                            <button
+                                type="button"
+                                data-filtre={t}
+                                aria-pressed={t === "tous" ? "true" : "false"}
+                                class="btn join-item border-trait bg-white px-6 text-navy aria-pressed:border-navy aria-pressed:bg-navy aria-pressed:text-white"
+                            >
+                                {t}{" "}
+                                <span class="chiffre text-[12px] opacity-70">
+                                    {parTaille(t)}
+                                </span>
+                            </button>
+                        ))
+                    }
+                </div>
+                <p
+                    class="font-mono text-[13px] text-doux"
+                    data-filtre-compte
+                    aria-live="polite"
+                >
+                    {modeles.length} modèles affichés
+                </p>
+            </div>
+
+            <Figure
+                titre="Électricité d'une conversation typique, par modèle"
+                sousTitre={`D'un modèle à l'autre, une conversation typique va de ${wh(sobre.wh_median_conv)} à ${wh(gourmand.wh_median_conv)}`}
+                alt={`Diagramme en barres horizontales. Il classe les ${modeles.length} modèles retenus selon l'électricité d'une conversation typique (médiane des Wh par conversation), du plus sobre au plus gourmand. Quelques grands modèles consomment beaucoup plus que tous les autres. Le plus sobre : ${sobre.modele}, ${wh(sobre.wh_median_conv)} ; le plus gourmand : ${gourmand.modele}, ${wh(gourmand.wh_median_conv)}.`}
+                source={`Source : Compar:IA, estimation EcoLogits · médiane des Wh par conversation · conversations en français · couleur = taille du modèle${horsEchelle.length ? ` · axe de 0 à ${max} Wh : ${horsEchelle.map((m) => `${m.modele} (${wh(m.wh_median_conv)})`).join(", ")} dépasse l'échelle, sa barre est coupée et sa valeur exacte écrite` : ""}`}
+            >
+                <div
+                    class="mb-4 flex gap-5 font-mono text-[12px]"
+                    aria-hidden="true"
+                >
+                    <span class="flex items-center gap-2"
+                        ><span class="size-3 rounded-sm bg-ciel"
+                        ></span>petit</span
+                    >
+                    <span class="flex items-center gap-2"
+                        ><span class="size-3 rounded-sm bg-moyen"
+                        ></span>moyen</span
+                    >
+                    <span class="flex items-center gap-2"
+                        ><span class="size-3 rounded-sm bg-navy"
+                        ></span>grand</span
+                    >
+                    <span class="flex items-center gap-2"
+                        ><span class="size-3 rounded-sm bg-inconnu"
+                        ></span>inconnue</span
+                    >
+                </div>
+                <ol class="classement">
+                    {
+                        lignes.map(({ m, svg }) => (
+                            <li
+                                data-taille={m.taille}
+                                data-compte
+                                class="grid grid-cols-[2.5rem_17rem_1fr] items-center"
+                            >
+                                <span class="font-mono text-[10px] text-doux">
+                                    {String(m.rang).padStart(3, "0")}
+                                </span>
+                                <a
+                                    href={`/modeles/${m.slug}`}
+                                    class="truncate font-mono text-[11px] leading-[14px] hover:text-roi hover:underline"
+                                >
+                                    {m.modele}
+                                </a>
+                                <span class="block" set:html={svg} />
+                            </li>
+                        ))
+                    }
+                </ol>
+                <div class="grid grid-cols-[2.5rem_17rem_1fr]">
+                    <span></span><span></span><span
+                        class="block"
+                        set:html={axe}
+                    />
+                </div>
+            </Figure>
+        </div>
+    </section>
+
+    <section class="pb-32" aria-labelledby="titre-tableau">
+        <div class="conteneur">
+            <div class="carte p-10">
+                <h2 id="titre-tableau" class="text-[22px]">Tableau complet</h2>
+                <p class="mt-2 text-doux">
+                    Toutes les valeurs du classement, avec le nombre de
+                    conversations (le dénominateur, pour vérifier).
+                </p>
+                <div
+                    class="mt-6 max-h-[720px] overflow-auto rounded-[12px] border border-trait"
+                >
+                    <table class="table table-pin-rows text-[14px]">
+                        <caption class="sr-only"
+                            >Modèles retenus, du plus sobre au plus gourmand</caption
+                        >
+                        <thead>
+                            <tr
+                                class="bg-glace font-mono text-[12px] uppercase text-navy"
+                            >
+                                <th scope="col">N°</th>
+                                <th scope="col">Modèle</th>
+                                <th scope="col">Taille</th>
+                                <th scope="col" class="text-right"
+                                    >Paramètres actifs</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Conversations</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Tokens / réponse</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Wh / 1 000 tokens</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Wh / conversation</th
+                                >
+                            </tr>
+                        </thead>
+                        <tbody class="chiffre">
+                            {
+                                modeles.map((m) => (
+                                    <tr
+                                        data-taille={m.taille}
+                                        class="hover:bg-glace"
+                                    >
+                                        <td class="text-doux">
+                                            {String(m.rang).padStart(3, "0")}
+                                        </td>
+                                        <th
+                                            scope="row"
+                                            class="whitespace-nowrap font-sans font-semibold"
+                                        >
+                                            <a
+                                                class="underline-offset-4 hover:underline"
+                                                href={`/modeles/${m.slug}`}
+                                            >
+                                                {m.modele}
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <EtiquetteTaille
+                                                taille={m.taille}
+                                            />
+                                        </td>
+                                        <td class="text-right">
+                                            {m.params_actifs != null
+                                                ? `${nombre(m.params_actifs)} Md`
+                                                : "non publiés"}
+                                        </td>
+                                        <td class="text-right">
+                                            {nombre(m.n_conv)}
+                                        </td>
+                                        <td class="text-right">
+                                            {tokens(m.tokens_median)}
+                                        </td>
+                                        <td class="text-right">
+                                            {wh(m.wh_1000_tokens, false)}
+                                        </td>
+                                        <td class="text-right font-semibold">
+                                            {wh(m.wh_median_conv, false)}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</Base>
+
+<style>
+    .classement :global(svg) {
+        display: block;
+        width: 100%;
+        height: 14px;
+    }
+</style>
+
+<script>
+    import "../../scripts/filtre-taille";
+</script>

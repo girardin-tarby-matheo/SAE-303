@@ -1,0 +1,41 @@
+---
+// /404 : fond navy, Jeton « éteint », mot géant 404 en contour (route A)
+import Base from "../layouts/Base.astro";
+---
+
+<Base titre="Page introuvable" sombre>
+    <section
+        class="relative flex min-h-screen items-center overflow-hidden pt-20"
+    >
+        <p
+            class="mot-geant absolute left-1/2 top-[14%] -translate-x-1/2 text-[300px]"
+            aria-hidden="true"
+        >
+            404
+        </p>
+        <div class="conteneur relative grid grid-cols-12 items-center gap-10">
+            <div class="col-span-6">
+                <span class="kicker">Erreur 404</span>
+                <h1 class="mt-6 text-[52px]">
+                    Cette page ne consomme rien&nbsp;:<span class="titre-fin"
+                        >elle n'existe pas.</span>
+                </h1>
+                <a
+                    href="/"
+                    class="btn btn-lg mt-10 rounded-full border-0 bg-white px-8 text-navy hover:bg-glace"
+                    >Retour à l'accueil <span aria-hidden="true">→</span></a
+                >
+            </div>
+            <div class="col-span-6">
+                <img
+                    src="/3d/jeton-eteint.webp"
+                    alt=""
+                    width="1600"
+                    height="1600"
+                    class="mx-auto w-[min(60vh,560px)]"
+                    aria-hidden="true"
+                />
+            </div>
+        </div>
+    </section>
+</Base>

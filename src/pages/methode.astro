@@ -1,5 +1,4 @@
 ---
-// /methode : sources, ce qui est mesuré ou pas, nettoyage, choix, limites, téléchargements (route A)
 import Base from "../layouts/Base.astro";
 import { nombre, wh, pourcent } from "../lib/format";
 import chiffres from "../data/chiffres.json";
@@ -25,10 +24,9 @@ const fichiers = [
             MÉTHODE
         </p>
         <div class="conteneur relative">
-            <span class="kicker">Pages de confiance</span>
+            <span class="kicker">Méthode</span>
             <h1 class="titre-1 mt-6 max-w-5xl">
-                Cite ta source,<span class="titre-fin"
-                    >donne ta méthode, publie tes données</span>
+                Sources, méthode <span class="titre-fin">et données</span>
             </h1>
             <p class="mt-6 max-w-2xl text-[19px] text-doux">
                 Tous les chiffres du site sont <strong class="text-navy"
@@ -66,10 +64,6 @@ const fichiers = [
                     <li>
                         <a class="hover:text-roi" href="#telechargements"
                             >Téléchargements</a>
-                    </li>
-                    <li>
-                        <a class="hover:text-roi" href="#sobriete"
-                            >Poids du site</a>
                     </li>
                 </ol>
             </nav>
@@ -366,20 +360,6 @@ const fichiers = [
                     </p>
                 </article>
 
-                <article id="sobriete" class="bloc-navy sombre p-10">
-                    <h2 class="titre-2">
-                        Un site sur la sobriété doit être sobre
-                    </h2>
-                    <p class="mt-4 text-glace">
-                        Poids total de la page d'accueil (HTML, CSS, JavaScript,
-                        polices, séquence 3D)&nbsp;:
-                        <strong class="chiffre text-white" data-poids-accueil
-                            >calculé à la construction du site</strong
-                        >. Les graphiques sont rendus à la construction du
-                        site&nbsp;: aucun JavaScript n'est envoyé pour les
-                        dessiner.
-                    </p>
-                </article>
             </div>
         </div>
     </section>

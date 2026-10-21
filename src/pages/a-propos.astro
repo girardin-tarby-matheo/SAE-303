@@ -106,39 +106,5 @@ const journal = [
         </div>
     </section>
 
-    <section class="pb-32" aria-labelledby="titre-journal">
-        <div class="conteneur grid grid-cols-12 gap-6">
-            <div class="col-span-4">
-                <span class="numero text-roi">003</span>
-                <h2 id="titre-journal" class="titre-2 mt-5">Journal IA</h2>
-                <p class="mt-4 text-doux">
-                    Les outils d'IA utilisés, ce qu'ils ont apporté, ce qui a
-                    été vérifié ou corrigé à la main.
-                </p>
-            </div>
-            <div class="col-span-8 space-y-6">
-                {
-                    journal.map((j) => (
-                        <article class="carte p-8">
-                            <h3 class="text-[19px]">{j.outil}</h3>
-                            <dl class="mt-4 space-y-4">
-                                <div>
-                                    <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">
-                                        Ce que ça a apporté
-                                    </dt>
-                                    <dd class="mt-1">{j.usage}</dd>
-                                </div>
-                                <div>
-                                    <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">
-                                        Vérifié ou corrigé à la main
-                                    </dt>
-                                    <dd class="mt-1">{j.verification}</dd>
-                                </div>
-                            </dl>
-                        </article>
-                    ))
-                }
-            </div>
-        </div>
-    </section>
+    
 </Base>

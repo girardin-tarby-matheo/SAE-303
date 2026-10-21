@@ -1,4 +1,4 @@
-// Fonctions pures Plot (méthode TP 5) : elles n'importent que Plot et ne lisent que leurs arguments.
+// Fonctions Plot pures : elles n'importent que Plot et ne lisent que leurs arguments.
 // Rendu au build : on leur passe un `document` (linkedom) et on récupère le SVG (outerHTML).
 // Règles : barres sur un axe commun partant de zéro, échelle normale, valeurs écrites sur les barres
 // (pas d'infobulle), couleur = taille du modèle uniquement (palette séquentielle).

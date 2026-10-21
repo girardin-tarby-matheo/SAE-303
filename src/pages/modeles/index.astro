@@ -1,6 +1,4 @@
 ---
-// /modeles : classement de tous les modèles retenus (route A), filtrable par taille (route B légère :
-// on masque des lignes déjà rendues au build, on ne redessine rien).
 import Base from "../../layouts/Base.astro";
 import Figure from "../../components/Figure.astro";
 import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
@@ -59,14 +57,6 @@ const parTaille = (t: string) =>
                 conversation), pour chaque modèle ayant au moins {
                     chiffres.modeles.seuil_conversations
                 } conversations en français.
-            </p>
-            <p
-                class="mt-6 inline-flex items-center gap-3 rounded-full border border-trait bg-white px-5 py-3 text-[15px] font-semibold shadow-bleu"
-            >
-                <span class="size-2.5 rounded-full bg-roi" aria-hidden="true"
-                ></span>
-                On ne compare pas des totaux&nbsp;: un total mesure la popularité,
-                pas la sobriété.
             </p>
         </div>
     </section>

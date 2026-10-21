@@ -44,14 +44,5 @@ export function minutesLED(v: number | null | undefined): string {
   return `${nombre(min / 60, 1)} h`;
 }
 
-export function slugifier(texte: string): string {
-  return texte
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "") // retire les accents (marques combinantes après NFD)
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 /** Numéro de ligne « 001 » */
 export const numero = (i: number) => String(i).padStart(3, "0");

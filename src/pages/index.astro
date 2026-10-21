@@ -15,9 +15,6 @@ import categories from "../data/categories.json";
 
 const { conversation, source, categorie_principale: principale } = chiffres;
 const parTaille = principale.parTaille as ParTaille[];
-const petit = parTaille.find((d) => d.taille === "petit")!;
-const moyen = parTaille.find((d) => d.taille === "moyen")!;
-const grand = parTaille.find((d) => d.taille === "grand")!;
 const document = documentBuild();
 
 const svgTranches = barresTranches(tranches as Tranche[], {
@@ -133,7 +130,6 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
       </div>
     </section>
 
-    <!-- 004 · CONCLUSION (bloc navy, le Jeton déborde de l'encoche) -->
     <section id="conclusion" data-jeton="90-119" class="pb-28 pt-56" aria-labelledby="titre-conclusion">
       <div class="conteneur">
         <div class="bloc-navy encoche sombre relative px-16 pb-14 pt-20">

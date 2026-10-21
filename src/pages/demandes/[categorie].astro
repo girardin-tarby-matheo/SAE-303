@@ -1,6 +1,4 @@
 ---
-// /demandes/[categorie] : route C, une page statique par catégorie (getStaticPaths).
-// Le sélecteur navigue vers une autre page : aucun graphique n'est recalculé dans le navigateur.
 import Base from "../../layouts/Base.astro";
 import Figure from "../../components/Figure.astro";
 import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
@@ -165,7 +163,7 @@ const grand = c.parTaille.find((d) => d.taille === "grand");
         </div>
     </section>
 
-    <section class="pb-16" aria-labelledby="titre-tableau">
+    <section class="pb-32" aria-labelledby="titre-tableau">
         <div class="conteneur">
             <div class="carte p-10">
                 <h2 id="titre-tableau" class="text-[22px]">
@@ -249,33 +247,9 @@ const grand = c.parTaille.find((d) => d.taille === "grand");
         </div>
     </section>
 
-    <section class="pb-32" aria-labelledby="titre-pourquoi">
-        <div class="conteneur">
-            <div
-                class="rounded-[20px] border-l-4 border-volt bg-white p-10 shadow-bleu"
-            >
-                <h2 id="titre-pourquoi" class="text-[22px]">
-                    Pourquoi ce choix de catégorie&nbsp;?
-                </h2>
-                <p class="mt-4 max-w-3xl">
-                    Pour <strong>adapter</strong> la comparaison&nbsp;: chacun regarde
-                    le type de demande qu'il fait le plus. Sans ce choix, on mélangerait
-                    des demandes différentes et on ne comparerait plus «&nbsp;une
-                    même demande&nbsp;». Pas d'infobulle&nbsp;: les valeurs exactes
-                    sont écrites sur les barres et dans le tableau.
-                </p>
-                <a
-                    href="/methode"
-                    class="btn mt-6 rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white"
-                    >Voir la méthode <span aria-hidden="true">→</span></a
-                >
-            </div>
-        </div>
-    </section>
 </Base>
 
 <script>
-    // Le sélecteur mène à la page statique de la catégorie choisie
     const s = document.querySelector<HTMLSelectElement>("#selecteur-categorie");
     s?.addEventListener("change", () => {
         location.href = `/demandes/${s.value}`;

@@ -1,11 +1,7 @@
-// Séquence 3D du Jeton pilotée au scroll (partie 09).
-// - un <canvas> dans une scène position: sticky ; on calcule la progression du scroll dans chaque
-//   section et on dessine l'image correspondante (requestAnimationFrame, écouteur passive) ;
-// - préchargement progressif : images 0–29 d'abord, le reste après le premier rendu ;
-// - prefers-reduced-motion : rien n'est chargé, l'image fixe du hero reste affichée.
+
 
 const N = 120;
-const DUREE_IMAGE_HERO = 140; // ms par image pour la rotation lente au repos
+const DUREE_IMAGE_HERO = 140; 
 
 const scene = document.querySelector<HTMLElement>("#scene-jeton");
 const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;

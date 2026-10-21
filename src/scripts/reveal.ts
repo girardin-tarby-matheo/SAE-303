@@ -1,5 +1,4 @@
-// Apparitions : IntersectionObserver ajoute une classe une seule fois ; transitions en CSS.
-// Sans JavaScript, la classe .js n'existe pas et tout reste visible.
+
 const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
 
 if ("IntersectionObserver" in window) {

@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: false;
@@ -38,9 +41,9 @@
 }
 
 @theme {
-  --font-display: var(--font-unbounded), "Unbounded", sans-serif;
-  --font-sans: var(--font-manrope), "Manrope", sans-serif;
-  --font-mono: var(--font-jetbrains), "JetBrains Mono", monospace;
+  --font-display: "Epilogue", sans-serif;
+  --font-sans: "Montserrat", sans-serif;
+  --font-mono: "DM Sans", sans-serif;
 
   --color-navy: #0A1F44;
   --color-nuit: #12306B;
@@ -151,7 +154,7 @@
   .titre-2 {
     font-size: clamp(32px, 2.8vw, 40px);
   }
-  /* seconde ligne fine des titres (« Unbounded 200 ») */
+  /* seconde ligne fine des titres (« Epilogue 200 ») */
   .titre-fin {
     display: block;
     font-weight: 200;

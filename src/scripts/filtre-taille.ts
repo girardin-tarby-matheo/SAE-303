@@ -1,5 +1,4 @@
-// Route B légère (/modeles) : le filtre masque des lignes déjà rendues au build (attribut data-taille).
-// Aucun graphique n'est recalculé dans le navigateur.
+
 const boutons = [...document.querySelectorAll<HTMLButtonElement>("[data-filtre]")];
 const lignes = [...document.querySelectorAll<HTMLElement>("[data-taille]")];
 const compteur = document.querySelector<HTMLElement>("[data-filtre-compte]");

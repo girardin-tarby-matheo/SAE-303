@@ -1,4 +1,4 @@
-// Inclinaison CSS 3D (± 6°) des cartes selon la position du pointeur
+
 const MAX = 6;
 const cartes = [...document.querySelectorAll<HTMLElement>("[data-tilt]")];
 const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;

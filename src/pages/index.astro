@@ -1,5 +1,4 @@
 ---
-// Accueil : récit au scroll en 4 temps (contexte → exploration → révélation → conclusion). Route A : tout est calculé au build.
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Jeton from "../components/Jeton.astro";
@@ -180,7 +179,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
             Électricité estimée par EcoLogits (inférence + fabrication des GPU, pas l'entraînement).
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode <span aria-hidden="true">→</span></a>
+            <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode <span aria-hidden="true"></span></a>
             <a href="/methode#telechargements" class="btn btn-accent rounded-full px-6">Télécharger les données</a>
           </div>
         </div>

@@ -1,10 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
-import Figure from "../../components/Figure.astro";
 import CarteCompteur from "../../components/CarteCompteur.astro";
 import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
-import { barresCategoriesModele } from "../../lib/graphiques";
-import { documentBuild } from "../../lib/dom";
 import { nombre, wh, tokens, pourcent, minutesLED } from "../../lib/format";
 import type { Modele } from "../../lib/types";
 import modelesJson from "../../data/modeles.json";
@@ -19,26 +16,6 @@ export function getStaticPaths() {
 }
 
 const { m, precedent, suivant } = Astro.props as { m: Modele; precedent: Modele | null; suivant: Modele | null };
-const reference = chiffres.modeles.wh_1000_tokens_median;
-const document = documentBuild();
-const svg = m.parCategorie.length
-  ? barresCategoriesModele(m.parCategorie, {
-      reference, taille: m.taille, document, width: 1040,
-      label: `Wh pour 1 000 tokens de ${m.modele}, par type de demande`,
-    }).outerHTML
-  : null;
-const tri = m.parCategorie.toSorted((a, b) => (b.wh_1000_tokens ?? 0) - (a.wh_1000_tokens ?? 0));
-const auDessus = m.wh_1000_tokens != null && m.wh_1000_tokens > reference;
-// EcoLogits estime un coût par token propre au modèle : il est souvent identique dans toutes les catégories
-const valeursCat = [...new Set(m.parCategorie.map((d) => d.wh_1000_tokens))];
-const constant = valeursCat.length === 1;
-const comparaison = `${auDessus ? "plus" : "moins"} que la médiane des modèles (${wh(reference)})`;
-const sousTitre = constant
-  ? `1 000 tokens coûtent ${wh(valeursCat[0])} quelle que soit la demande, ${comparaison} : le coût par token dépend du modèle, pas de la demande`
-  : `${m.modele} consomme ${comparaison} par token`;
-const altValeurs = constant
-  ? `Toutes les catégories : ${wh(valeursCat[0])}.`
-  : `${tri.map((d) => `${d.nom} : ${wh(d.wh_1000_tokens)}`).join(" ; ")}.`;
 const parConv = m.parCategorie.toSorted((a, b) => (b.wh_median_conv ?? 0) - (a.wh_median_conv ?? 0));
 ---
 
@@ -105,26 +82,6 @@ const parConv = m.parCategorie.toSorted((a, b) => (b.wh_median_conv ?? 0) - (a.w
               </p>
             </div>
           </div>
-        )
-      }
-    </div>
-  </section>
-
-  <section class="pb-12" aria-label="Par type de demande">
-    <div class="conteneur">
-      {
-        svg ? (
-          <Figure
-            titre={`Électricité de ${m.modele} pour 1 000 tokens, par type de demande`}
-            sousTitre={sousTitre}
-            svg={svg}
-            alt={`Diagramme en barres horizontales. Il compare l'électricité consommée par ${m.modele} pour 1 000 tokens dans chaque type de demande où il a au moins 100 conversations, avec en référence la médiane de tous les modèles (${wh(reference)}). ${constant ? "Le coût par token est le même dans toutes les catégories, " : "Le modèle se situe "}${auDessus ? "au-dessus de la médiane." : "sous la médiane."} ${altValeurs}`}
-            source="Source : Compar:IA, estimation EcoLogits · catégories où le modèle a au moins 100 conversations · ligne pointillée = médiane de tous les modèles retenus"
-          />
-        ) : (
-          <p class="carte p-8 text-doux">
-            Ce modèle n'a au moins 100 conversations dans aucun type de demande&nbsp;: pas de détail par catégorie.
-          </p>
         )
       }
     </div>

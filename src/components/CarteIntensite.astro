@@ -1,0 +1,54 @@
+---
+// V2 du notebook : « Le même Wh ne pèse pas pareil selon le pays ». Carte de contexte, rendue au build (Plot).
+import Figure from "./Figure.astro";
+import { carteIntensite, SANS_DONNEE } from "../lib/graphiques";
+import { documentBuild } from "../lib/dom";
+import { nombre } from "../lib/format";
+import type { FeatureCollection, Geometry } from "geojson";
+import type { ProprietesPays } from "../lib/types";
+import intensite from "../data/intensite.json";
+import geo from "../data/pays.geo.json";
+
+interface Props {
+  class?: string;
+}
+const { class: classe } = Astro.props;
+
+const { annee, france, etats_unis, rapport_us_fr, plus_bas, plus_hauts } = intensite;
+const plot = carteIntensite(geo as FeatureCollection<Geometry, ProprietesPays>, {
+  annee, france, etatsUnis: etats_unis, document: documentBuild(),
+  label: `Intensité carbone de l'électricité par pays en ${annee}`,
+});
+const echelle = plot.scale("color")!;
+const seuils = echelle.domain as number[];
+const couleurs = echelle.range as string[];
+const classes = couleurs.map((couleur, i) => ({
+  couleur,
+  texte: i === 0 ? `moins de ${nombre(seuils[0])}` : i === seuils.length ? `${nombre(seuils[i - 1])} et plus` : `${nombre(seuils[i - 1])} à ${nombre(seuils[i])}`,
+}));
+---
+
+<Figure
+  class={classe}
+  titre="Le même Wh ne pèse pas pareil selon le pays"
+  sousTitre={`En ${annee}, produire 1 kWh émet environ ${rapport_us_fr} fois plus de CO₂ aux États-Unis (${nombre(etats_unis)} g) qu'en France (${nombre(france)} g).`}
+  alt={`Carte du monde de l'intensité carbone de l'électricité en ${annee}. La France est à ${nombre(france)} gCO₂e/kWh, les États-Unis à ${nombre(etats_unis)}, soit environ ${rapport_us_fr} fois plus. Les pays les plus bas sont ${plus_bas.join(", ")} ; les plus hauts, ${plus_hauts.join(", ")}. C'est une carte de contexte : nous ne savons pas dans quel pays tourne chaque modèle. Source : Ember, Our World in Data (CC BY 4.0).`}
+  source={`Source : Ember (2026), retraité par Our World in Data (CC BY 4.0). Intensité carbone en cycle de vie, ${annee}. Gris : pas de donnée. Carte de contexte : nous ne savons pas dans quel pays tourne chaque modèle.`}
+>
+  <ul class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[13px]" aria-hidden="true">
+    <li class="font-sans font-semibold">gCO₂e/kWh en {annee}</li>
+    {
+      classes.map((c) => (
+        <li class="flex items-center gap-2">
+          <span class="size-3.5 rounded-[4px]" style={`background:${c.couleur}`} />
+          {c.texte}
+        </li>
+      ))
+    }
+    <li class="flex items-center gap-2 text-doux">
+      <span class="size-3.5 rounded-[4px] border border-trait" style={`background:${SANS_DONNEE}`} />
+      pas de donnée
+    </li>
+  </ul>
+  <Fragment set:html={plot.outerHTML} />
+</Figure>

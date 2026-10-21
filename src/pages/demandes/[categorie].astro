@@ -19,13 +19,13 @@ const c = Astro.props.c as Categorie;
 const document = documentBuild();
 const svgLongueur = barresParTaille(c.parTaille, {
     champ: "tokens_median",
-    label: "tokens écrits par réponse (médiane) →",
+    label: "tokens écrits par réponse (médiane)",
     document,
     width: 560,
 }).outerHTML;
 const svgCout = barresParTaille(c.parTaille, {
     champ: "wh_1000_tokens_median",
-    label: "Wh pour 1 000 tokens (médiane) →",
+    label: "Wh pour 1 000 tokens (médiane)",
     document,
     width: 560,
 }).outerHTML;

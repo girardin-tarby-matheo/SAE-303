@@ -10,12 +10,6 @@ export interface ParTaille {
   wh_1000_tokens_median: number | null;
 }
 
-export interface Tranche {
-  tranche: string;
-  n: number;
-  part: number;
-}
-
 export interface LigneModeleCategorie {
   modele: string;
   slug: string;
@@ -66,4 +60,32 @@ export interface Modele {
   tokens_median: number | null;
   plus_sobre_que: number | null;
   parCategorie: CategorieDuModele[];
+}
+
+export interface Distribution {
+  n: number;
+  mediane: number;
+  moyenne: number;
+  q50: number;
+  part_top10: number;
+  ordres_de_grandeur: number;
+  classes: { x1: number; x2: number; n: number }[];
+}
+
+export interface ProprietesPays {
+  code: string;
+  pays: string;
+  gco2_kwh: number | null;
+}
+
+export interface ChiffrePublie {
+  source: string;
+  grandeur: string;
+  valeur: number;
+  unite: string;
+  par: string;
+  nature: string;
+  perimetre: string;
+  date: string;
+  url: string;
 }

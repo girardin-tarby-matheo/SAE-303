@@ -5,20 +5,23 @@ import Jeton from "../components/Jeton.astro";
 import Figure from "../components/Figure.astro";
 import Chip from "../components/Chip.astro";
 import LigneNumerotee from "../components/LigneNumerotee.astro";
-import { barresParTaille, barresTranches } from "../lib/graphiques";
+import CarteIntensite from "../components/CarteIntensite.astro";
+import { barresParTaille, histogrammeConversations, pointsChiffresPublies, NATURES } from "../lib/graphiques";
 import { documentBuild } from "../lib/dom";
 import { nombre, wh, tokens, pourcent, minutesLED } from "../lib/format";
-import type { ParTaille, Tranche } from "../lib/types";
+import type { ParTaille, Distribution, ChiffrePublie } from "../lib/types";
 import chiffres from "../data/chiffres.json";
-import tranches from "../data/tranches.json";
+import distributionJson from "../data/distribution.json";
+import publiesJson from "../data/chiffres_publies.json";
 import categories from "../data/categories.json";
 
 const { conversation, source, categorie_principale: principale } = chiffres;
 const parTaille = principale.parTaille as ParTaille[];
 const document = documentBuild();
 
-const svgTranches = barresTranches(tranches as Tranche[], {
-  label: "Part des conversations par tranche d'électricité", document, width: 620,
+const distribution = distributionJson as Distribution;
+const svgDistribution = histogrammeConversations(distribution, {
+  label: "Nombre de conversations selon l'énergie estimée par conversation", document, width: 640,
 }).outerHTML;
 const svgLongueur = barresParTaille(parTaille, {
   champ: "tokens_median", label: "tokens écrits par réponse (médiane)", document, width: 340, sombre: true,
@@ -30,6 +33,17 @@ const svgCout = barresParTaille(parTaille, {
 const cat = categories.find((c) => c.slug === principale.slug)!;
 const top5 = categories.slice(0, 5);
 const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
+
+// V3 du notebook : chiffres publiés, chacun avec son périmètre
+const publies = publiesJson.chiffres as ChiffrePublie[];
+const plage = publiesJson.plage as [number, number];
+const energie = publies.filter((d) => d.grandeur === "énergie").toSorted((a, b) => a.valeur - b.valeur);
+const bas = energie[0], haut = energie.at(-1)!;
+const svgPublies = pointsChiffresPublies(publies, {
+  mettreEnAvant: "Compar:IA · tous modèles", plage, document, width: 1040,
+  label: "Électricité par requête selon les chiffres publiés",
+}).outerHTML;
+const v = (x: number) => nombre(x, x < 1 ? 2 : 0);
 ---
 
 <Base titre="SAE 303">
@@ -64,17 +78,16 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
             <span class="kicker">Exploration</span>
             <h2 id="titre-exploration" class="titre-2 mt-6">Combien consomme une conversation&nbsp;?</h2>
             <p class="mt-4 text-[20px] font-semibold leading-tight text-roi">
-              Près de 2 conversations sur 3 consomment moins de 1&nbsp;Wh.
+              Une requête, ce n'est pas un chiffre&nbsp;: d'une conversation à l'autre, l'énergie varie de {distribution.ordres_de_grandeur} ordres de grandeur.
             </p>
           </div>
           <Figure
             class="mt-10"
-            remplir
-            titre="Électricité d'une conversation, par tranche"
-            sousTitre={`${pourcent(conversation.part_moins_1wh)} des conversations restent sous 1 Wh`}
-            svg={svgTranches}
-            alt={`Diagramme en barres horizontales. Il compare la part des conversations dans trois tranches d'électricité consommée. La grande majorité des conversations consomme moins de 1 Wh. Moins de 1 Wh : ${pourcent(tranches[0].part)} ; de 1 à 10 Wh : ${pourcent(tranches[1].part)} ; plus de 10 Wh : ${pourcent(tranches[2].part)}.`}
-            source={`Source : Compar:IA, estimation EcoLogits · échantillon fixe de ${nombre(conversation.echantillon)} conversations`}
+            titre="Une requête, ce n'est pas un chiffre"
+            sousTitre={`La moitié des conversations consomme moins de ${wh(distribution.q50)}, mais les 10 % les plus gourmandes pèsent ${pourcent(distribution.part_top10)} de l'énergie totale.`}
+            svg={svgDistribution}
+            alt={`Histogramme en échelle logarithmique de l'énergie estimée de ${nombre(distribution.n)} conversations Compar:IA en français, de 0,001 Wh à plus de 100 Wh. La distribution n'a pas une seule bosse mais plusieurs : une principale vers 0,1 Wh (surtout des petits et moyens modèles), un plateau autour de 1 Wh, une seconde bosse vers 5 Wh (surtout des grands modèles), puis une longue traîne. La médiane (${wh(distribution.mediane)}) est environ ${rapport} fois plus basse que la moyenne (${wh(distribution.moyenne)}), tirée vers le haut par les conversations les plus gourmandes. Source : Compar:IA (données au 3 juin 2026), estimations EcoLogits.`}
+            source={`Source : Compar:IA (ministère de la Culture), données au ${source.date}, énergie estimée avec EcoLogits. Échantillon aléatoire de ${nombre(distribution.n)} conversations en français non nulles · échelle logarithmique.`}
           />
           <aside class="mt-6 rounded-[20px] border border-trait bg-glace p-6" data-reveal>
             <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-roi">Médiane et moyenne</p>
@@ -161,6 +174,57 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
     </section>
   </Jeton>
 
+  <section id="carte" class="pb-28" aria-labelledby="titre-carte">
+    <div class="conteneur">
+      <div class="grid grid-cols-12 items-end gap-10" data-reveal>
+        <div class="col-span-8">
+          <span class="kicker">Contexte · carte du monde</span>
+          <h2 id="titre-carte" class="titre-2 mt-6">Le même Wh ne pèse pas pareil selon le pays.</h2>
+          <p class="mt-4 max-w-2xl text-doux">
+            Nos chiffres sont en Wh, pour des conversations en français. Le CO₂ dépend ensuite de l'électricité du pays où tourne le serveur,
+            que Compar:IA ne publie pas&nbsp;: cette carte donne un ordre de grandeur, pas le CO₂ de chaque conversation.
+          </p>
+        </div>
+        <div class="col-span-4 text-right">
+          <a href="/carte" class="btn btn-primary btn-lg rounded-full px-8">Voir la carte en grand <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <CarteIntensite class="mt-10" />
+    </div>
+  </section>
+
+  <section id="chiffres-publies" class="pb-28" aria-labelledby="titre-publies">
+    <div class="conteneur">
+      <div data-reveal>
+        <span class="kicker">Contexte · les autres chiffres</span>
+        <h2 id="titre-publies" class="titre-2 mt-6">Chacun son chiffre, chacun son périmètre.</h2>
+        <p class="mt-4 max-w-3xl text-doux">
+          Google, OpenAI ou la presse publient aussi «&nbsp;l'électricité d'une requête&nbsp;». Ces chiffres ne mesurent ni la même
+          chose, ni le même périmètre&nbsp;: notre médiane Compar:IA ({wh(conversation.wh_median)}) est du même ordre que ceux de Google et d'OpenAI.
+        </p>
+      </div>
+      <Figure
+        class="mt-10"
+        titre="Chacun son chiffre, chacun son périmètre"
+        sousTitre={`Du plus petit au plus grand, les chiffres publiés vont de ${v(bas.valeur)} à ${v(haut.valeur)} Wh (×${nombre(haut.valeur / bas.valeur)}) : le ${haut.source.split(" · ")[0]} compte un e-mail de 100 mots, ${bas.source.split(" · ")[0]} une requête courte. Chez Compar:IA, les modèles eux-mêmes s'étalent de ${nombre(plage[0], 2)} à ${nombre(plage[1], 2)} Wh.`}
+        alt={`Graphique à points, en échelle logarithmique, de l'électricité par requête annoncée par ${energie.length} sources : ${energie.map((d) => `${d.source} ${v(d.valeur)} Wh par ${d.par}`).join(" ; ")}. Notre médiane Compar:IA est du même ordre de grandeur que les chiffres de Google et d'OpenAI, loin de l'estimation du Washington Post, qui compte un e-mail entier et un centre de données américain moyen. Sources : Google, OpenAI, Washington Post, Compar:IA.`}
+        source={`Sources : Google (août 2025), OpenAI (juin 2025), Washington Post et UC Riverside (septembre 2024), Compar:IA (données au ${source.date}, estimation EcoLogits, conversations en français) · échelle logarithmique.`}
+      >
+        <ul class="mb-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[13px]" aria-hidden="true">
+          {
+            NATURES.domain.map((n, i) => (
+              <li class="flex items-center gap-2">
+                <span class="size-3.5 rounded-full" style={`background:${NATURES.range[i]}`} />
+                {n}
+              </li>
+            ))
+          }
+        </ul>
+        <Fragment set:html={svgPublies} />
+      </Figure>
+    </div>
+  </section>
+
   <section id="source" class="pb-32" aria-labelledby="titre-source">
     <div class="conteneur">
       <div class="carte grid grid-cols-12 items-center gap-10 p-12">
@@ -170,7 +234,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
         <div class="col-span-5">
           <p>
             <strong>{source.nom}</strong> ({source.producteur}, data.gouv.fr) · {source.licence} · mise à jour du {source.date}.
-            Électricité estimée par EcoLogits (inférence + fabrication des GPU, pas l'entraînement).
+            Électricité estimée par EcoLogits pour la phase d'usage seulement (l'inférence), sans l'entraînement.
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
             <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode</a>

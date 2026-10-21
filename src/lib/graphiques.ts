@@ -4,7 +4,8 @@
 // (pas d'infobulle), couleur = taille du modèle uniquement (palette séquentielle).
 
 import * as Plot from "@observablehq/plot";
-import type { ParTaille, Tranche, CategorieDuModele, Taille } from "./types";
+import type { Feature, FeatureCollection, Geometry } from "geojson";
+import type { ParTaille, Distribution, ProprietesPays, ChiffrePublie } from "./types";
 
 const TAILLES = {
   domain: ["petit", "moyen", "grand", "inconnue"],
@@ -64,106 +65,171 @@ export function barresParTaille(
   });
 }
 
-/** Tranches de consommation d'une conversation (3 barres) */
-export function barresTranches(
-  tranches: Tranche[],
-  { label, document, width = 560 }: { label: string; document?: Doc; width?: number },
+/** gRelatif du notebook (question 4) : électricité d'une conversation typique, pour les 15 modèles les plus utilisés */
+export function barresModeles(
+  modeles: { modele: string; wh_median_conv: number | null }[],
+  { label, document, width = 1040 }: { label: string; document?: Doc; width?: number },
 ) {
+  const tri = modeles.toSorted((a, b) => (b.wh_median_conv ?? 0) - (a.wh_median_conv ?? 0));
   return Plot.plot({
-    document, width, height: 190, marginLeft: 110, marginRight: 60, marginBottom: 44,
+    document, width, height: tri.length * 30 + 70, marginLeft: 260, marginRight: 90, marginBottom: 44,
     ariaLabel: label,
     style: style(),
-    x: { label: "part des conversations →", domain: [0, 1], tickFormat: (d: number) => `${Math.round(d * 100)} %`, grid: true, labelAnchor: "right", labelArrow: "none" },
-    y: { label: null, domain: tranches.map((d) => d.tranche), padding: 0.25 },
+    x: { label: "Wh par conversation (médiane) →", grid: true, labelAnchor: "left", labelArrow: "none", tickFormat: graduation },
+    y: { label: null, domain: tri.map((d) => d.modele), padding: 0.28 },
     marks: [
-      Plot.barX(tranches, { x: "part", y: "tranche", fill: "#1E5BD8", rx: 6 }),
-      Plot.text(tranches, {
-        x: "part", y: "tranche", dx: 8, textAnchor: "start", fontWeight: 600,
-        text: (d: Tranche) => `${Math.round(d.part * 100)} %`,
+      Plot.barX(tri, { x: "wh_median_conv", y: "modele", fill: "#1E5BD8", rx: 4 }),
+      Plot.text(tri, {
+        x: (d: { wh_median_conv: number | null }) => d.wh_median_conv ?? 0, y: "modele", dx: 8, textAnchor: "start", fontWeight: 600,
+        text: (d: { wh_median_conv: number | null }) => (d.wh_median_conv == null ? "inconnu" : `${fr(d.wh_median_conv, 2)} Wh`),
       }),
       Plot.ruleX([0]),
     ],
   });
 }
+
+/** V1 du notebook : histogramme de l'énergie par conversation, échelle logarithmique, médiane et moyenne en repères */
+export function histogrammeConversations(
+  d: Distribution,
+  { label, document, width = 640 }: { label: string; document?: Doc; width?: number },
+) {
+  const domaine: [number, number] = [d.classes[0].x1, d.classes.at(-1)!.x2];
+  const reperes = [0.001, 0.01, 0.1, 1, 10, 100, 1000].filter((t) => t >= domaine[0] && t <= domaine[1]);
+  return Plot.plot({
+    document, width, height: 300, marginLeft: 48, marginRight: 20, marginTop: 24, marginBottom: 48,
+    ariaLabel: label,
+    style: style(),
+    x: {
+      type: "log", domain: domaine, ticks: reperes, tickFormat: graduation,
+      label: "Énergie estimée par conversation (Wh, échelle logarithmique) →", labelAnchor: "left", labelArrow: "none",
+    },
+    y: { label: "↑ nombre de conversations", grid: true, labelArrow: "none", tickFormat: graduation },
+    marks: [
+      Plot.rectY(d.classes, { x1: "x1", x2: "x2", y: "n", fill: "#5B8DEF", inset: 0.5 }),
+      Plot.ruleX([d.mediane], { stroke: "#0A1F44", strokeWidth: 2 }),
+      Plot.text([d.mediane], {
+        x: (v: number) => v, frameAnchor: "top", textAnchor: "start", dx: 6, dy: 4, fontWeight: 600,
+        text: (v: number) => `Médiane : ${fr(v, 2)} Wh`,
+      }),
+      Plot.ruleX([d.moyenne], { stroke: "#0A1F44", strokeDasharray: "4,3" }),
+      Plot.text([d.moyenne], {
+        x: (v: number) => v, frameAnchor: "top", textAnchor: "start", dx: 6, dy: 22,
+        text: (v: number) => `Moyenne : ${fr(v, 2)} Wh`,
+      }),
+      Plot.ruleY([0]),
+    ],
+  });
+}
+
+// Palette du site, du clair (électricité peu carbonée) au foncé ; le notebook utilise YlOrBr
+const BLEUS = ["#CFE0FB", "#8FB3F2", "#5B8DEF", "#1E5BD8", "#0A1F44"];
+export const SANS_DONNEE = "#E3E7EE";
+const interpolerBleus = (t: number) => {
+  const i = Math.min(BLEUS.length - 2, Math.floor(t * (BLEUS.length - 1)));
+  const u = t * (BLEUS.length - 1) - i;
+  const rgb = (h: string) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+  const [a, b] = [rgb(BLEUS[i]), rgb(BLEUS[i + 1])];
+  return `rgb(${a.map((x, k) => Math.round(x + (b[k] - x) * u)).join(",")})`;
+};
 
 /**
- * Une ligne du classement des modèles : une barre, sur une échelle commune [0, max] partant de zéro.
- * Une valeur au-delà de `max` (valeur extrême) est dessinée coupée, avec une coupure visible
- * et sa valeur exacte écrite « hors échelle ».
+ * V2 du notebook : carte choroplèthe de l'intensité carbone de l'électricité (projection Equal Earth,
+ * échelle quantize à 5 classes, gris = pas de donnée, France et États-Unis légendés).
+ * La légende est dessinée en HTML à partir de plot.scale("color").
  */
-export function barreModele(
-  d: { wh_median_conv: number | null; taille: Taille },
-  { max, document, width = 760, hauteur = 14 }: { max: number; document?: Doc; width?: number; hauteur?: number },
+export function carteIntensite(
+  geo: FeatureCollection<Geometry, ProprietesPays>,
+  { annee, france, etatsUnis, label, document, width = 960 }: {
+    annee: number; france: number; etatsUnis: number; label: string; document?: Doc; width?: number;
+  },
 ) {
-  const v = d.wh_median_conv;
-  const coupee = v != null && v > max;
-  const fin = coupee ? max : v ?? 0;
-  const pas = max / 60;
   return Plot.plot({
-    document, width, height: hauteur, margin: 0, marginRight: 140,
-    style: { ...style(), fontSize: "10px" },
-    x: { domain: [0, max], axis: null },
-    y: { axis: null, domain: [0, 1] },
-    color: TAILLES,
+    document, width, projection: "equal-earth", margin: 8,
+    ariaLabel: label,
+    style: style(),
+    color: { type: "quantize", n: 5, interpolate: interpolerBleus, unknown: SANS_DONNEE, label: `gCO₂e/kWh en ${annee}` },
     marks: [
-      Plot.gridX({ stroke: "#A9C6F5", strokeOpacity: 0.5 }),
-      Plot.rectX([d], { x1: 0, x2: fin, y1: 0.12, y2: 0.88, fill: "taille", rx: 2 }),
-      // coupure de la barre (deux traits blancs obliques)
-      ...(coupee
-        ? [Plot.link([0, 1], {
-            x1: (i: number) => max - pas * (2.4 + i * 1.2), x2: (i: number) => max - pas * (1.6 + i * 1.2),
-            y1: 0, y2: 1, stroke: "white", strokeWidth: 3,
-          })]
-        : []),
-      Plot.text([d], {
-        x: fin, y: 0.5, dx: 5, textAnchor: "start", fontWeight: 600,
-        text: () => (v == null ? "inconnu" : coupee ? `${fr(v, 2)} Wh (hors échelle)` : `${fr(v, 2)} Wh`),
+      Plot.sphere({ stroke: "#A9C6F5" }),
+      Plot.geo(geo.features, {
+        fill: (f: Feature<Geometry, ProprietesPays>) => f.properties.gco2_kwh,
+        stroke: "white",
+        strokeWidth: 0.4,
+        title: (f: Feature<Geometry, ProprietesPays>) =>
+          `${f.properties.pays} : ${f.properties.gco2_kwh == null ? "pas de donnée" : fr(f.properties.gco2_kwh) + " gCO₂e/kWh"}`,
       }),
-      Plot.ruleX([0]),
+      Plot.text(
+        [
+          { lon: 2.5, lat: 46.5, t: `France : ${fr(france)}` },
+          { lon: -98, lat: 39, t: `États-Unis : ${fr(etatsUnis)}` },
+        ],
+        { x: "lon", y: "lat", text: "t", fontWeight: 700, fill: "#0A1F44", stroke: "white", strokeWidth: 3, paintOrder: "stroke" },
+      ),
     ],
   });
 }
 
-/** Axe commun du classement (aligné sur les lignes de barreModele) */
-export function axeClassement(
-  { max, label, document, width = 760 }: { max: number; label: string; document?: Doc; width?: number },
-) {
-  return Plot.plot({
-    document, width, height: 44, marginLeft: 0, marginRight: 140, marginTop: 4, marginBottom: 36,
-    ariaLabel: label,
-    style: { ...style(), fontSize: "11px" },
-    x: { domain: [0, max], label, labelAnchor: "left", labelArrow: "none" },
-    marks: [Plot.axisX({ anchor: "bottom", tickFormat: graduation }), Plot.ruleX([0])],
-  });
-}
+// Nature de la source (nominale) : palette du notebook, bleu du site en premier ; validée daltonisme (dataviz)
+export const NATURES = {
+  domain: ["Mesure interne", "Déclaration sans méthode", "Analyse de cycle de vie", "Estimation externe"],
+  range: ["#1E5BD8", "#E0A120", "#1A9A6B", "#C97AA6"],
+};
 
-/** Fiche modèle : Wh pour 1 000 tokens dans chaque catégorie, avec la médiane de tous les modèles en référence */
-export function barresCategoriesModele(
-  lignes: CategorieDuModele[],
-  { reference, taille, label, document, width = 760 }: {
-    reference: number; taille: Taille; label: string; document?: Doc; width?: number;
+/**
+ * V3 du notebook (graphiqueChiffres2) : chiffres publiés par requête, sur échelle logarithmique,
+ * couleur = nature de la source, Compar:IA cerclé avec la plage des médianes de nos modèles.
+ */
+export function pointsChiffresPublies(
+  donnees: ChiffrePublie[],
+  { grandeur = "énergie", unite = "Wh", mettreEnAvant, plage, label, document, width = 1040 }: {
+    grandeur?: string; unite?: string; mettreEnAvant: string; plage: [number, number]; label: string; document?: Doc; width?: number;
   },
 ) {
-  const tri = lignes.toSorted((a, b) => (b.wh_1000_tokens ?? 0) - (a.wh_1000_tokens ?? 0));
-  const couleur = TAILLES.range[TAILLES.domain.indexOf(taille)];
+  const lignes = donnees.filter((d) => d.grandeur === grandeur && d.valeur > 0).toSorted((a, b) => a.valeur - b.valeur);
+  const vmax = Math.max(...lignes.map((d) => d.valeur));
+  const vmin = Math.min(...lignes.map((d) => d.valeur), plage[0]);
+  const xmin = 10 ** Math.floor(Math.log10(vmin) - 0.3);
+  const xmax = vmax * 12;
+  const reperes = [0.01, 0.1, 1, 10, 100, 1000].filter((t) => t >= xmin && t <= xmax);
+  const position = (v: number) => Math.log10(v / xmin) / Math.log10(xmax / xmin);
   return Plot.plot({
-    document, width, height: tri.length * 30 + 80, marginLeft: 280, marginRight: 90, marginTop: 28, marginBottom: 44,
+    document, width, height: 60 + 70 * lignes.length, marginLeft: 190, marginRight: 20, marginTop: 30, marginBottom: 46,
     ariaLabel: label,
     style: style(),
-    x: { label: "Wh pour 1 000 tokens →", grid: true, labelAnchor: "left", labelArrow: "none", tickFormat: graduation },
-    y: { label: null, domain: tri.map((d) => d.nom), padding: 0.28 },
+    x: {
+      type: "log", domain: [xmin, xmax], ticks: reperes, grid: true, tickFormat: (d: number) => `${graduation(d)} ${unite}`,
+      label: `${grandeur} par requête, échelle logarithmique →`, labelAnchor: "left", labelArrow: "none",
+    },
+    y: { domain: lignes.map((d) => d.source), label: null },
+    color: NATURES,
     marks: [
-      Plot.barX(tri, { x: "wh_1000_tokens", y: "nom", fill: couleur, rx: 4 }),
-      Plot.text(tri, {
-        x: (d: CategorieDuModele) => d.wh_1000_tokens ?? 0, y: "nom", dx: 8, textAnchor: "start", fontWeight: 600,
-        text: (d: CategorieDuModele) => (d.wh_1000_tokens == null ? "inconnu" : `${fr(d.wh_1000_tokens, 2)} Wh`),
+      Plot.ruleY([mettreEnAvant], { x1: plage[0], x2: plage[1], stroke: "#C97AA6", strokeWidth: 12, strokeOpacity: 0.28, strokeLinecap: "round" }),
+      Plot.text([mettreEnAvant], {
+        x: plage[1], text: () => `médianes des modèles : de ${fr(plage[0], 2)} à ${fr(plage[1], 2)} ${unite}`,
+        dy: -16, textAnchor: "end", fill: "#7A3F66", fontSize: 11,
       }),
-      Plot.ruleX([reference], { stroke: "#1E5BD8", strokeWidth: 2, strokeDasharray: "6 4" }),
-      Plot.text([reference], {
-        x: (d: number) => d, frameAnchor: "top", dy: -18, textAnchor: "start", dx: 6, fill: "#1E5BD8", fontWeight: 600,
-        text: (d: number) => `médiane de tous les modèles : ${fr(d, 2)} Wh`,
+      Plot.ruleY(lignes, { y: "source", x1: xmin, x2: "valeur", stroke: "#D6E3F8" }),
+      Plot.dot(lignes, {
+        x: "valeur", y: "source", r: 8, fill: "nature",
+        stroke: (d: ChiffrePublie) => (d.source === mettreEnAvant ? "#0A1F44" : "white"), strokeWidth: 2,
+        title: (d: ChiffrePublie) => `${d.source}
+${fr(d.valeur, 2)} ${unite} par ${d.par}
+${d.nature}
+${d.perimetre}`,
       }),
-      Plot.ruleX([0]),
+      // libellés à droite du point, ou à gauche quand le point est dans le dernier tiers de l'axe
+      ...[
+        { cote: lignes.filter((d) => position(d.valeur) < 0.6), dx: 14, textAnchor: "start" as const },
+        { cote: lignes.filter((d) => position(d.valeur) >= 0.6), dx: -14, textAnchor: "end" as const },
+      ].flatMap(({ cote, dx, textAnchor }) => [
+        Plot.text(cote, {
+          x: "valeur", y: "source", dx, textAnchor, fontWeight: 700,
+          text: (d: ChiffrePublie) => `${fr(d.valeur, d.valeur < 1 ? 2 : 0)} ${unite} · ${d.par}`,
+        }),
+        Plot.text(cote, {
+          x: "valeur", y: "source", dx, dy: 17, textAnchor, fill: "#4A5A78", fontSize: 11, lineWidth: 46, lineAnchor: "top",
+          text: "perimetre",
+        }),
+      ]),
     ],
   });
 }

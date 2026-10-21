@@ -51,14 +51,26 @@ const controles = {
 
 const wh = echantillon.map((d) => d.wh);
 const tokens = echantillon.map((d) => d.tokens).filter((v) => v > 0);
-const NOMS_TRANCHES = ["moins de 1 Wh", "de 1 à 10 Wh", "plus de 10 Wh"];
-const tranche = (v) => (v < 1 ? NOMS_TRANCHES[0] : v < 10 ? NOMS_TRANCHES[1] : NOMS_TRANCHES[2]);
-const comptes = d3.rollup(echantillon, (v) => v.length, (d) => tranche(d.wh));
-const tranches = NOMS_TRANCHES.map((t) => ({
-  tranche: t,
-  n: comptes.get(t) ?? 0,
-  part: r2((comptes.get(t) ?? 0) / echantillon.length),
-}));
+
+// V1 du notebook : histogramme de l'énergie par conversation, échelle log, 10 classes par ordre de grandeur (seuilsLog, repartition)
+const whPositifs = wh.filter((v) => v > 0).toSorted(d3.ascending);
+const [logMin, logMax] = d3.extent(whPositifs).map(Math.log10);
+const PAS = 0.1;
+const seuilsLog = d3.range(Math.floor(logMin / PAS) * PAS, logMax + PAS, PAS).map((e) => 10 ** e);
+const q90 = d3.quantile(whPositifs, 0.9);
+const distribution = {
+  n: whPositifs.length,
+  mediane: r2(d3.median(wh)),
+  moyenne: r2(d3.mean(wh)),
+  q50: r2(d3.quantile(whPositifs, 0.5)),
+  part_top10: r2(d3.sum(whPositifs.filter((x) => x > q90)) / d3.sum(whPositifs)),
+  ordres_de_grandeur: Math.round(Math.log10(whPositifs.at(-1) / whPositifs[0])),
+  classes: d3
+    .bin()
+    .domain([seuilsLog[0], seuilsLog.at(-1)])
+    .thresholds(seuilsLog)(whPositifs)
+    .map((b) => ({ x1: +b.x0.toPrecision(4), x2: +b.x1.toPrecision(4), n: b.length })),
+};
 
 const echantillonTaille = echantillon
   .filter((d) => d.wh > 0 && d.tokens > 0)
@@ -190,6 +202,44 @@ const modeles = energieClean
     };
   });
 
+// V3 du notebook : chiffres publiés sur l'électricité (et l'eau) d'une requête, chacun avec son périmètre (chiffresPublies)
+const chiffresPublies = [
+  { source: "Google · Gemini", grandeur: "eau", valeur: 0.26, unite: "mL", par: "requête texte médiane",
+    nature: "Mesure interne",
+    perimetre: "eau de refroidissement des centres de données seulement (efficacité hydrique moyenne de Google en 2024), sans l'eau de production de l'électricité",
+    date: "2025-08", url: "https://arxiv.org/abs/2508.15734" },
+  { source: "OpenAI · ChatGPT", grandeur: "eau", valeur: 0.32, unite: "mL", par: "requête moyenne",
+    nature: "Déclaration sans méthode", perimetre: "non précisé ; 0,000085 gallon converti en mL",
+    date: "2025-06", url: "https://blog.samaltman.com/the-gentle-singularity" },
+  { source: "Mistral · Le Chat", grandeur: "eau", valeur: 45, unite: "mL", par: "réponse de 400 tokens",
+    nature: "Analyse de cycle de vie",
+    perimetre: "impact marginal de l'inférence en cycle de vie, hors terminaux des utilisateurs",
+    date: "2025-07", url: "https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai" },
+  { source: "Washington Post · GPT-4", grandeur: "eau", valeur: 519, unite: "mL", par: "e-mail de 100 mots",
+    nature: "Estimation externe",
+    perimetre: "refroidissement + eau de production de l'électricité, centre de données américain moyen",
+    date: "2024-09", url: "https://www.washingtonpost.com/technology/2024/09/18/energy-ai-use-electricity-water-data-centers/" },
+  { source: "Google · Gemini", grandeur: "énergie", valeur: 0.24, unite: "Wh", par: "requête texte médiane",
+    nature: "Mesure interne",
+    perimetre: "accélérateurs + processeur et mémoire + machines en attente + infrastructure du centre (PUE 1,09) ; hors réseau, terminaux et entraînement",
+    date: "2025-08", url: "https://arxiv.org/abs/2508.15734" },
+  { source: "OpenAI · ChatGPT", grandeur: "énergie", valeur: 0.34, unite: "Wh", par: "requête moyenne",
+    nature: "Déclaration sans méthode", perimetre: "non précisé",
+    date: "2025-06", url: "https://blog.samaltman.com/the-gentle-singularity" },
+  { source: "Washington Post · GPT-4", grandeur: "énergie", valeur: 140, unite: "Wh", par: "e-mail de 100 mots",
+    nature: "Estimation externe", perimetre: "centre de données américain moyen ; 0,14 kWh converti en Wh",
+    date: "2024-09", url: "https://www.washingtonpost.com/technology/2024/09/18/energy-ai-use-electricity-water-data-centers/" },
+  { source: "Compar:IA · tous modèles", grandeur: "énergie", valeur: r2(d3.median(wh)), unite: "Wh",
+    par: "conversation médiane", nature: "Estimation externe",
+    perimetre: "estimation EcoLogits de la phase d'usage (inférence seulement)",
+    date: "2026-06", url: "https://www.data.gouv.fr/datasets/compar-ia" },
+];
+const medianesModeles = energieClean.map((d) => d.wh_median_conv).filter((v) => v > 0);
+const publies = {
+  plage: [r2(d3.min(medianesModeles)), r2(d3.max(medianesModeles))],
+  chiffres: chiffresPublies,
+};
+
 const principale = categories[0];
 const chiffres = {
   source: {
@@ -208,7 +258,7 @@ const chiffres = {
     wh_moyen: r2(d3.mean(wh)),
     rapport_moyenne_mediane: r2(d3.mean(wh) / d3.median(wh)),
     wh_max: r2(d3.max(wh)),
-    part_moins_1wh: tranches[0].part,
+    part_moins_1wh: r2(wh.filter((v) => v < 1).length / wh.length),
     tokens_median: d3.median(tokens),
     tokens_q25: d3.quantile(tokens, 0.25),
     tokens_q75: d3.quantile(tokens, 0.75),
@@ -234,7 +284,7 @@ const chiffres = {
   controles,
 };
 
-const fichiers = { "chiffres.json": chiffres, "tranches.json": tranches, "categories.json": categories, "modeles.json": modeles };
+const fichiers = { "chiffres.json": chiffres, "distribution.json": distribution, "chiffres_publies.json": publies, "categories.json": categories, "modeles.json": modeles };
 for (const dossier of ["../src/data/", "../public/donnees/"]) {
   const url = new URL(dossier, import.meta.url);
   mkdirSync(url, { recursive: true });

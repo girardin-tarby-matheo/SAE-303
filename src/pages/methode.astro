@@ -2,16 +2,19 @@
 import Base from "../layouts/Base.astro";
 import { nombre, wh, pourcent } from "../lib/format";
 import chiffres from "../data/chiffres.json";
+import intensite from "../data/intensite.json";
 
 const { source, conversation, modeles, controles } = chiffres;
 const fichiers = [
     { nom: "chiffres.json", role: "Chiffres clés, contrôles avant / après" },
-    { nom: "tranches.json", role: "Conversations par tranche d'électricité" },
+    { nom: "distribution.json", role: "Histogramme de l'énergie par conversation (classes, médiane, moyenne)" },
     {
         nom: "categories.json",
         role: "Par type de demande et par taille, avec les modèles",
     },
     { nom: "modeles.json", role: "Fiche de chaque modèle, par catégorie" },
+    { nom: "chiffres_publies.json", role: "Chiffres publiés par Google, OpenAI, Mistral, le Washington Post, avec leur périmètre" },
+    { nom: "intensite.json", role: `Intensité carbone de l'électricité par pays (${intensite.annee})` },
 ];
 ---
 
@@ -137,11 +140,31 @@ const fichiers = [
                                     >
                                     <td
                                         >Intensité carbone de l'électricité par
-                                        pays (cycle de vie)&nbsp;: chargée et
-                                        contrôlée dans le notebook, réservée à
-                                        une future section CO₂ (non affichée).</td
+                                        pays (cycle de vie), en {intensite.annee}, pays
+                                        seulement (agrégats retirés)&nbsp;: <a
+                                            class="underline"
+                                            href="/carte">carte de contexte</a
+                                        >, sans calcul du CO₂ de chaque
+                                        conversation. Contours&nbsp;: Natural Earth.</td
                                     >
                                     <td>CC-BY-4.0</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"
+                                        >Chiffres publiés<span
+                                            class="block font-normal text-doux"
+                                            >pour comparer</span
+                                        ></th
+                                    >
+                                    <td
+                                        ><a class="underline" href="https://arxiv.org/abs/2508.15734">Google</a>,
+                                        <a class="underline" href="https://blog.samaltman.com/the-gentle-singularity">OpenAI</a>,
+                                        <a class="underline" href="https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai">Mistral</a>,
+                                        <a class="underline" href="https://www.washingtonpost.com/technology/2024/09/18/energy-ai-use-electricity-water-data-centers/">Washington Post</a>&nbsp;:
+                                        électricité ou eau par requête, chacun
+                                        avec son périmètre, relevés à la main.</td
+                                    >
+                                    <td>2024 – 2025</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -159,10 +182,12 @@ const fichiers = [
                             fiables pour comparer les modèles entre eux.
                         </li>
                         <li>
-                            Sont comptées l'<strong>inférence</strong> (produire la
-                            réponse) et la <strong>fabrication des GPU</strong>.
-                            L'<strong>entraînement</strong> des modèles n'est pas
-                            compté.
+                            Seule la <strong>phase d'usage</strong> est comptée&nbsp;:
+                            l'<strong>inférence</strong> dans le centre de données
+                            (produire la réponse). La fabrication des GPU n'entre
+                            que dans les autres indicateurs d'EcoLogits (CO₂,
+                            ressources), que nous n'utilisons pas, et
+                            l'<strong>entraînement</strong> n'est pas compté.
                         </li>
                         <li>
                             Pour les modèles dont la taille n'est pas publiée ({
@@ -282,10 +307,13 @@ const fichiers = [
                             (approximation).
                         </li>
                         <li>
-                            Barres sur un axe commun partant de zéro, échelle
-                            normale, valeurs écrites sur les barres&nbsp;: pas
-                            d'infobulle, pas d'échelle logarithmique, pas de 3D
-                            dans les graphiques.
+                            Barres sur un axe commun partant de zéro, valeurs
+                            écrites sur les barres, pas de 3D dans les
+                            graphiques. Deux exceptions en <strong>échelle
+                            logarithmique</strong>, signalée sur l'axe&nbsp;: la
+                            distribution d'une conversation et les chiffres
+                            publiés, qui s'étalent sur plusieurs ordres de
+                            grandeur.
                         </li>
                     </ul>
                 </article>
@@ -295,7 +323,7 @@ const fichiers = [
                     <h2 class="titre-2 mt-5">Les limites</h2>
                     <ul class="mt-6 list-disc space-y-3 pl-5 marker:text-roi">
                         <li>
-                            La distribution (tranches, médiane d'une
+                            La distribution (histogramme, médiane d'une
                             conversation) vient d'un <strong
                                 >échantillon fixe de {
                                     nombre(conversation.echantillon)

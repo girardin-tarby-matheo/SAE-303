@@ -1,0 +1,1004 @@
+{
+  "source": {
+    "nom": "Ember (2026), retraité par Our World in Data",
+    "url": "https://ourworldindata.org/grapher/carbon-intensity-electricity",
+    "licence": "CC BY 4.0",
+    "contours": "Natural Earth 1:110m (domaine public)"
+  },
+  "annee": 2024,
+  "controles": {
+    "avant": 6332,
+    "apres": 5691,
+    "pays_annee": 195
+  },
+  "france": 40,
+  "etats_unis": 384,
+  "rapport_us_fr": 10,
+  "plus_bas": [
+    "Éthiopie",
+    "Bhoutan",
+    "Népal"
+  ],
+  "plus_hauts": [
+    "Turkménistan",
+    "Ouzbékistan",
+    "Montserrat"
+  ],
+  "pays": [
+    {
+      "code": "ETH",
+      "pays": "Éthiopie",
+      "gco2_kwh": 23
+    },
+    {
+      "code": "BTN",
+      "pays": "Bhoutan",
+      "gco2_kwh": 24
+    },
+    {
+      "code": "NPL",
+      "pays": "Népal",
+      "gco2_kwh": 24
+    },
+    {
+      "code": "ALB",
+      "pays": "Albanie",
+      "gco2_kwh": 25
+    },
+    {
+      "code": "CRI",
+      "pays": "Costa Rica",
+      "gco2_kwh": 25
+    },
+    {
+      "code": "PRY",
+      "pays": "Paraguay",
+      "gco2_kwh": 25
+    },
+    {
+      "code": "ISL",
+      "pays": "Islande",
+      "gco2_kwh": 28
+    },
+    {
+      "code": "COD",
+      "pays": "République démocratique du Congo",
+      "gco2_kwh": 28
+    },
+    {
+      "code": "NOR",
+      "pays": "Norvège",
+      "gco2_kwh": 30
+    },
+    {
+      "code": "SWE",
+      "pays": "Suède",
+      "gco2_kwh": 35
+    },
+    {
+      "code": "CHE",
+      "pays": "Suisse",
+      "gco2_kwh": 35
+    },
+    {
+      "code": "FRA",
+      "pays": "France",
+      "gco2_kwh": 40
+    },
+    {
+      "code": "SLE",
+      "pays": "Sierra Leone",
+      "gco2_kwh": 48
+    },
+    {
+      "code": "NAM",
+      "pays": "Namibie",
+      "gco2_kwh": 49
+    },
+    {
+      "code": "MWI",
+      "pays": "Malawi",
+      "gco2_kwh": 55
+    },
+    {
+      "code": "UGA",
+      "pays": "Ouganda",
+      "gco2_kwh": 59
+    },
+    {
+      "code": "FIN",
+      "pays": "Finlande",
+      "gco2_kwh": 67
+    },
+    {
+      "code": "URY",
+      "pays": "Uruguay",
+      "gco2_kwh": 70
+    },
+    {
+      "code": "TJK",
+      "pays": "Tadjikistan",
+      "gco2_kwh": 71
+    },
+    {
+      "code": "KEN",
+      "pays": "Kenya",
+      "gco2_kwh": 85
+    },
+    {
+      "code": "VEN",
+      "pays": "Venezuela",
+      "gco2_kwh": 86
+    },
+    {
+      "code": "SVK",
+      "pays": "Slovaquie",
+      "gco2_kwh": 97
+    },
+    {
+      "code": "AUT",
+      "pays": "Autriche",
+      "gco2_kwh": 103
+    },
+    {
+      "code": "BRA",
+      "pays": "Brésil",
+      "gco2_kwh": 106
+    },
+    {
+      "code": "PRT",
+      "pays": "Portugal",
+      "gco2_kwh": 111
+    },
+    {
+      "code": "NZL",
+      "pays": "Nouvelle-Zélande",
+      "gco2_kwh": 112
+    },
+    {
+      "code": "SLV",
+      "pays": "Salvador",
+      "gco2_kwh": 113
+    },
+    {
+      "code": "LTU",
+      "pays": "Lituanie",
+      "gco2_kwh": 116
+    },
+    {
+      "code": "KGZ",
+      "pays": "Kirghizistan",
+      "gco2_kwh": 119
+    },
+    {
+      "code": "ZMB",
+      "pays": "Zambie",
+      "gco2_kwh": 120
+    },
+    {
+      "code": "BEL",
+      "pays": "Belgique",
+      "gco2_kwh": 127
+    },
+    {
+      "code": "MOZ",
+      "pays": "Mozambique",
+      "gco2_kwh": 129
+    },
+    {
+      "code": "AFG",
+      "pays": "Afghanistan",
+      "gco2_kwh": 131
+    },
+    {
+      "code": "SWZ",
+      "pays": "Eswatini",
+      "gco2_kwh": 131
+    },
+    {
+      "code": "DNK",
+      "pays": "Danemark",
+      "gco2_kwh": 132
+    },
+    {
+      "code": "LUX",
+      "pays": "Luxembourg",
+      "gco2_kwh": 132
+    },
+    {
+      "code": "LVA",
+      "pays": "Lettonie",
+      "gco2_kwh": 134
+    },
+    {
+      "code": "GEO",
+      "pays": "Géorgie",
+      "gco2_kwh": 145
+    },
+    {
+      "code": "ESP",
+      "pays": "Espagne",
+      "gco2_kwh": 146
+    },
+    {
+      "code": "GRL",
+      "pays": "Groenland",
+      "gco2_kwh": 150
+    },
+    {
+      "code": "SDN",
+      "pays": "Soudan",
+      "gco2_kwh": 154
+    },
+    {
+      "code": "BLZ",
+      "pays": "Belize",
+      "gco2_kwh": 170
+    },
+    {
+      "code": "HRV",
+      "pays": "Croatie",
+      "gco2_kwh": 171
+    },
+    {
+      "code": "GIN",
+      "pays": "Guinée",
+      "gco2_kwh": 181
+    },
+    {
+      "code": "BDI",
+      "pays": "Burundi",
+      "gco2_kwh": 184
+    },
+    {
+      "code": "HUN",
+      "pays": "Hongrie",
+      "gco2_kwh": 184
+    },
+    {
+      "code": "AGO",
+      "pays": "Angola",
+      "gco2_kwh": 185
+    },
+    {
+      "code": "CAN",
+      "pays": "Canada",
+      "gco2_kwh": 185
+    },
+    {
+      "code": "ECU",
+      "pays": "Équateur",
+      "gco2_kwh": 204
+    },
+    {
+      "code": "GBR",
+      "pays": "Royaume-Uni",
+      "gco2_kwh": 217
+    },
+    {
+      "code": "PAN",
+      "pays": "Panama",
+      "gco2_kwh": 221
+    },
+    {
+      "code": "CMR",
+      "pays": "Cameroun",
+      "gco2_kwh": 226
+    },
+    {
+      "code": "SVN",
+      "pays": "Slovénie",
+      "gco2_kwh": 230
+    },
+    {
+      "code": "LAO",
+      "pays": "Laos",
+      "gco2_kwh": 232
+    },
+    {
+      "code": "ARM",
+      "pays": "Arménie",
+      "gco2_kwh": 240
+    },
+    {
+      "code": "COK",
+      "pays": "Îles Cook",
+      "gco2_kwh": 250
+    },
+    {
+      "code": "NLD",
+      "pays": "Pays-Bas",
+      "gco2_kwh": 251
+    },
+    {
+      "code": "ROU",
+      "pays": "Roumanie",
+      "gco2_kwh": 251
+    },
+    {
+      "code": "PER",
+      "pays": "Pérou",
+      "gco2_kwh": 259
+    },
+    {
+      "code": "CHL",
+      "pays": "Chili",
+      "gco2_kwh": 260
+    },
+    {
+      "code": "IRL",
+      "pays": "Irlande",
+      "gco2_kwh": 271
+    },
+    {
+      "code": "FJI",
+      "pays": "Fidji",
+      "gco2_kwh": 278
+    },
+    {
+      "code": "BGR",
+      "pays": "Bulgarie",
+      "gco2_kwh": 279
+    },
+    {
+      "code": "ITA",
+      "pays": "Italie",
+      "gco2_kwh": 281
+    },
+    {
+      "code": "COL",
+      "pays": "Colombie",
+      "gco2_kwh": 298
+    },
+    {
+      "code": "GTM",
+      "pays": "Guatemala",
+      "gco2_kwh": 301
+    },
+    {
+      "code": "NIC",
+      "pays": "Nicaragua",
+      "gco2_kwh": 301
+    },
+    {
+      "code": "LBR",
+      "pays": "Liberia",
+      "gco2_kwh": 316
+    },
+    {
+      "code": "GRC",
+      "pays": "Grèce",
+      "gco2_kwh": 322
+    },
+    {
+      "code": "HND",
+      "pays": "Honduras",
+      "gco2_kwh": 322
+    },
+    {
+      "code": "SUR",
+      "pays": "Suriname",
+      "gco2_kwh": 322
+    },
+    {
+      "code": "BLR",
+      "pays": "Biélorussie",
+      "gco2_kwh": 330
+    },
+    {
+      "code": "DEU",
+      "pays": "Allemagne",
+      "gco2_kwh": 336
+    },
+    {
+      "code": "PRK",
+      "pays": "Corée du Nord",
+      "gco2_kwh": 341
+    },
+    {
+      "code": "EST",
+      "pays": "Estonie",
+      "gco2_kwh": 343
+    },
+    {
+      "code": "ARG",
+      "pays": "Argentine",
+      "gco2_kwh": 345
+    },
+    {
+      "code": "TZA",
+      "pays": "Tanzanie",
+      "gco2_kwh": 345
+    },
+    {
+      "code": "RWA",
+      "pays": "Rwanda",
+      "gco2_kwh": 354
+    },
+    {
+      "code": "PAK",
+      "pays": "Pakistan",
+      "gco2_kwh": 374
+    },
+    {
+      "code": "WSM",
+      "pays": "Samoa",
+      "gco2_kwh": 375
+    },
+    {
+      "code": "LKA",
+      "pays": "Sri Lanka",
+      "gco2_kwh": 378
+    },
+    {
+      "code": "USA",
+      "pays": "États-Unis",
+      "gco2_kwh": 384
+    },
+    {
+      "code": "ZWE",
+      "pays": "Zimbabwe",
+      "gco2_kwh": 384
+    },
+    {
+      "code": "LBN",
+      "pays": "Liban",
+      "gco2_kwh": 390
+    },
+    {
+      "code": "CIV",
+      "pays": "Côte d'Ivoire",
+      "gco2_kwh": 405
+    },
+    {
+      "code": "PSE",
+      "pays": "Palestine",
+      "gco2_kwh": 414
+    },
+    {
+      "code": "CZE",
+      "pays": "Tchéquie",
+      "gco2_kwh": 414
+    },
+    {
+      "code": "KOR",
+      "pays": "Corée du Sud",
+      "gco2_kwh": 416
+    },
+    {
+      "code": "MNE",
+      "pays": "Monténégro",
+      "gco2_kwh": 422
+    },
+    {
+      "code": "TGO",
+      "pays": "Togo",
+      "gco2_kwh": 423
+    },
+    {
+      "code": "PYF",
+      "pays": "Polynésie française",
+      "gco2_kwh": 431
+    },
+    {
+      "code": "MDG",
+      "pays": "Madagascar",
+      "gco2_kwh": 432
+    },
+    {
+      "code": "RUS",
+      "pays": "Russie",
+      "gco2_kwh": 446
+    },
+    {
+      "code": "DJI",
+      "pays": "Djibouti",
+      "gco2_kwh": 450
+    },
+    {
+      "code": "CPV",
+      "pays": "Cap-Vert",
+      "gco2_kwh": 462
+    },
+    {
+      "code": "ARE",
+      "pays": "Émirats arabes unis",
+      "gco2_kwh": 468
+    },
+    {
+      "code": "GHA",
+      "pays": "Ghana",
+      "gco2_kwh": 469
+    },
+    {
+      "code": "TUR",
+      "pays": "Turquie",
+      "gco2_kwh": 470
+    },
+    {
+      "code": "MAC",
+      "pays": "Macao",
+      "gco2_kwh": 474
+    },
+    {
+      "code": "JPN",
+      "pays": "Japon",
+      "gco2_kwh": 483
+    },
+    {
+      "code": "MEX",
+      "pays": "Mexique",
+      "gco2_kwh": 483
+    },
+    {
+      "code": "VNM",
+      "pays": "Viêt Nam",
+      "gco2_kwh": 484
+    },
+    {
+      "code": "MLT",
+      "pays": "Malte",
+      "gco2_kwh": 489
+    },
+    {
+      "code": "BOL",
+      "pays": "Bolivie",
+      "gco2_kwh": 495
+    },
+    {
+      "code": "NGA",
+      "pays": "Nigeria",
+      "gco2_kwh": 496
+    },
+    {
+      "code": "SGP",
+      "pays": "Singapour",
+      "gco2_kwh": 499
+    },
+    {
+      "code": "KIR",
+      "pays": "Kiribati",
+      "gco2_kwh": 500
+    },
+    {
+      "code": "MMR",
+      "pays": "Birmanie",
+      "gco2_kwh": 503
+    },
+    {
+      "code": "MKD",
+      "pays": "Macédoine du Nord",
+      "gco2_kwh": 510
+    },
+    {
+      "code": "CYP",
+      "pays": "Chypre",
+      "gco2_kwh": 511
+    },
+    {
+      "code": "MRT",
+      "pays": "Mauritanie",
+      "gco2_kwh": 512
+    },
+    {
+      "code": "SOM",
+      "pays": "Somalie",
+      "gco2_kwh": 512
+    },
+    {
+      "code": "PNG",
+      "pays": "Papouasie-Nouvelle-Guinée",
+      "gco2_kwh": 514
+    },
+    {
+      "code": "GAB",
+      "pays": "Gabon",
+      "gco2_kwh": 523
+    },
+    {
+      "code": "JOR",
+      "pays": "Jordanie",
+      "gco2_kwh": 530
+    },
+    {
+      "code": "HTI",
+      "pays": "Haïti",
+      "gco2_kwh": 535
+    },
+    {
+      "code": "KHM",
+      "pays": "Cambodge",
+      "gco2_kwh": 539
+    },
+    {
+      "code": "MLI",
+      "pays": "Mali",
+      "gco2_kwh": 539
+    },
+    {
+      "code": "SEN",
+      "pays": "Sénégal",
+      "gco2_kwh": 540
+    },
+    {
+      "code": "ISR",
+      "pays": "Israël",
+      "gco2_kwh": 541
+    },
+    {
+      "code": "OMN",
+      "pays": "Oman",
+      "gco2_kwh": 543
+    },
+    {
+      "code": "ABW",
+      "pays": "Aruba",
+      "gco2_kwh": 550
+    },
+    {
+      "code": "AUS",
+      "pays": "Australie",
+      "gco2_kwh": 554
+    },
+    {
+      "code": "CHN",
+      "pays": "République populaire de Chine",
+      "gco2_kwh": 555
+    },
+    {
+      "code": "THA",
+      "pays": "Thaïlande",
+      "gco2_kwh": 555
+    },
+    {
+      "code": "SYC",
+      "pays": "Seychelles",
+      "gco2_kwh": 556
+    },
+    {
+      "code": "TUN",
+      "pays": "Tunisie",
+      "gco2_kwh": 558
+    },
+    {
+      "code": "NCL",
+      "pays": "Nouvelle-Calédonie",
+      "gco2_kwh": 561
+    },
+    {
+      "code": "BFA",
+      "pays": "Burkina Faso",
+      "gco2_kwh": 562
+    },
+    {
+      "code": "JAM",
+      "pays": "Jamaïque",
+      "gco2_kwh": 563
+    },
+    {
+      "code": "DOM",
+      "pays": "République dominicaine",
+      "gco2_kwh": 568
+    },
+    {
+      "code": "TON",
+      "pays": "Tonga",
+      "gco2_kwh": 571
+    },
+    {
+      "code": "EGY",
+      "pays": "Égypte",
+      "gco2_kwh": 575
+    },
+    {
+      "code": "ERI",
+      "pays": "Érythrée",
+      "gco2_kwh": 578
+    },
+    {
+      "code": "QAT",
+      "pays": "Qatar",
+      "gco2_kwh": 582
+    },
+    {
+      "code": "BEN",
+      "pays": "Bénin",
+      "gco2_kwh": 584
+    },
+    {
+      "code": "GIB",
+      "pays": "Gibraltar",
+      "gco2_kwh": 591
+    },
+    {
+      "code": "YEM",
+      "pays": "Yémen",
+      "gco2_kwh": 592
+    },
+    {
+      "code": "ATG",
+      "pays": "Antigua-et-Barbuda",
+      "gco2_kwh": 595
+    },
+    {
+      "code": "BRB",
+      "pays": "Barbade",
+      "gco2_kwh": 595
+    },
+    {
+      "code": "MAR",
+      "pays": "Maroc",
+      "gco2_kwh": 595
+    },
+    {
+      "code": "MYS",
+      "pays": "Malaisie",
+      "gco2_kwh": 600
+    },
+    {
+      "code": "NRU",
+      "pays": "Nauru",
+      "gco2_kwh": 600
+    },
+    {
+      "code": "VCT",
+      "pays": "Saint-Vincent-et-les-Grenadines",
+      "gco2_kwh": 600
+    },
+    {
+      "code": "BIH",
+      "pays": "Bosnie-Herzégovine",
+      "gco2_kwh": 601
+    },
+    {
+      "code": "GUM",
+      "pays": "Guam",
+      "gco2_kwh": 608
+    },
+    {
+      "code": "POL",
+      "pays": "Pologne",
+      "gco2_kwh": 608
+    },
+    {
+      "code": "KNA",
+      "pays": "Saint-Christophe-et-Niévès",
+      "gco2_kwh": 609
+    },
+    {
+      "code": "ASM",
+      "pays": "Samoa américaines",
+      "gco2_kwh": 611
+    },
+    {
+      "code": "MDV",
+      "pays": "Maldives",
+      "gco2_kwh": 612
+    },
+    {
+      "code": "PHL",
+      "pays": "Philippines",
+      "gco2_kwh": 622
+    },
+    {
+      "code": "TCD",
+      "pays": "Tchad",
+      "gco2_kwh": 622
+    },
+    {
+      "code": "GNB",
+      "pays": "Guinée-Bissau",
+      "gco2_kwh": 625
+    },
+    {
+      "code": "TCA",
+      "pays": "îles Turques-et-Caïques",
+      "gco2_kwh": 630
+    },
+    {
+      "code": "DZA",
+      "pays": "Algérie",
+      "gco2_kwh": 633
+    },
+    {
+      "code": "AZE",
+      "pays": "Azerbaïdjan",
+      "gco2_kwh": 634
+    },
+    {
+      "code": "CYM",
+      "pays": "îles Caïmans",
+      "gco2_kwh": 634
+    },
+    {
+      "code": "MDA",
+      "pays": "Moldavie",
+      "gco2_kwh": 634
+    },
+    {
+      "code": "KWT",
+      "pays": "Koweït",
+      "gco2_kwh": 635
+    },
+    {
+      "code": "TWN",
+      "pays": "Taïwan",
+      "gco2_kwh": 635
+    },
+    {
+      "code": "SLB",
+      "pays": "Îles Salomon",
+      "gco2_kwh": 636
+    },
+    {
+      "code": "BMU",
+      "pays": "Bermudes",
+      "gco2_kwh": 639
+    },
+    {
+      "code": "MUS",
+      "pays": "Maurice",
+      "gco2_kwh": 642
+    },
+    {
+      "code": "CUB",
+      "pays": "Cuba",
+      "gco2_kwh": 643
+    },
+    {
+      "code": "SSD",
+      "pays": "Soudan du Sud",
+      "gco2_kwh": 643
+    },
+    {
+      "code": "GNQ",
+      "pays": "Guinée équatoriale",
+      "gco2_kwh": 644
+    },
+    {
+      "code": "GUY",
+      "pays": "Guyana",
+      "gco2_kwh": 645
+    },
+    {
+      "code": "IRN",
+      "pays": "Iran",
+      "gco2_kwh": 649
+    },
+    {
+      "code": "LCA",
+      "pays": "Sainte-Lucie",
+      "gco2_kwh": 650
+    },
+    {
+      "code": "BHS",
+      "pays": "Bahamas",
+      "gco2_kwh": 653
+    },
+    {
+      "code": "PRI",
+      "pays": "Porto Rico",
+      "gco2_kwh": 656
+    },
+    {
+      "code": "SRB",
+      "pays": "Serbie",
+      "gco2_kwh": 666
+    },
+    {
+      "code": "GMB",
+      "pays": "Gambie",
+      "gco2_kwh": 667
+    },
+    {
+      "code": "GRD",
+      "pays": "Grenade",
+      "gco2_kwh": 667
+    },
+    {
+      "code": "TLS",
+      "pays": "Timor oriental",
+      "gco2_kwh": 667
+    },
+    {
+      "code": "NER",
+      "pays": "Niger",
+      "gco2_kwh": 674
+    },
+    {
+      "code": "HKG",
+      "pays": "Hong Kong",
+      "gco2_kwh": 675
+    },
+    {
+      "code": "IDN",
+      "pays": "Indonésie",
+      "gco2_kwh": 680
+    },
+    {
+      "code": "TTO",
+      "pays": "Trinité-et-Tobago",
+      "gco2_kwh": 682
+    },
+    {
+      "code": "IRQ",
+      "pays": "Irak",
+      "gco2_kwh": 683
+    },
+    {
+      "code": "SAU",
+      "pays": "Arabie saoudite",
+      "gco2_kwh": 692
+    },
+    {
+      "code": "BGD",
+      "pays": "Bangladesh",
+      "gco2_kwh": 696
+    },
+    {
+      "code": "IND",
+      "pays": "Inde",
+      "gco2_kwh": 705
+    },
+    {
+      "code": "SYR",
+      "pays": "Syrie",
+      "gco2_kwh": 706
+    },
+    {
+      "code": "COG",
+      "pays": "République du Congo",
+      "gco2_kwh": 716
+    },
+    {
+      "code": "ZAF",
+      "pays": "Afrique du Sud",
+      "gco2_kwh": 717
+    },
+    {
+      "code": "KAZ",
+      "pays": "Kazakhstan",
+      "gco2_kwh": 802
+    },
+    {
+      "code": "MNG",
+      "pays": "Mongolie",
+      "gco2_kwh": 811
+    },
+    {
+      "code": "LBY",
+      "pays": "Libye",
+      "gco2_kwh": 827
+    },
+    {
+      "code": "BWA",
+      "pays": "Botswana",
+      "gco2_kwh": 851
+    },
+    {
+      "code": "BRN",
+      "pays": "Brunei",
+      "gco2_kwh": 892
+    },
+    {
+      "code": "BHR",
+      "pays": "Bahreïn",
+      "gco2_kwh": 902
+    },
+    {
+      "code": "MSR",
+      "pays": "Montserrat",
+      "gco2_kwh": 1000
+    },
+    {
+      "code": "UZB",
+      "pays": "Ouzbékistan",
+      "gco2_kwh": 1040
+    },
+    {
+      "code": "TKM",
+      "pays": "Turkménistan",
+      "gco2_kwh": 1306
+    }
+  ]
+}

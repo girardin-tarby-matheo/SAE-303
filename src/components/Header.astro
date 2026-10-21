@@ -6,6 +6,7 @@ const { sombre = false } = Astro.props;
 const liens = [
   { href: "/demandes", texte: "Demandes" },
   { href: "/modeles", texte: "Modèles" },
+  { href: "/carte", texte: "Carte" },
   { href: "/methode", texte: "Méthode" },
   { href: "/a-propos", texte: "À propos" },
 ];
@@ -28,7 +29,7 @@ const actif = (href: string) => chemin === href || chemin.startsWith(href + "/")
       </a>
     </div>
     <div class="navbar-center">
-      <ul class="flex items-center gap-10 text-[16px] font-semibold">
+      <ul class="flex items-center gap-8 text-[16px] font-semibold">
         {
           liens.map((l) => (
             <li>
@@ -48,7 +49,7 @@ const actif = (href: string) => chemin === href || chemin.startsWith(href + "/")
       </ul>
     </div>
     <div class="navbar-end">
-      <a href="/demandes" class="btn btn-primary rounded-full px-6">Compare ta demande <span aria-hidden="true">→</span></a>
+      <a href="/demandes" class="btn btn-primary rounded-full px-6">Compare ta demande <span aria-hidden="true"></span></a>
     </div>
   </nav>
 </header>

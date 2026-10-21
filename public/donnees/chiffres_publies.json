@@ -1,0 +1,96 @@
+{
+  "plage": [
+    0.02,
+    120.92
+  ],
+  "chiffres": [
+    {
+      "source": "Google · Gemini",
+      "grandeur": "eau",
+      "valeur": 0.26,
+      "unite": "mL",
+      "par": "requête texte médiane",
+      "nature": "Mesure interne",
+      "perimetre": "eau de refroidissement des centres de données seulement (efficacité hydrique moyenne de Google en 2024), sans l'eau de production de l'électricité",
+      "date": "2025-08",
+      "url": "https://arxiv.org/abs/2508.15734"
+    },
+    {
+      "source": "OpenAI · ChatGPT",
+      "grandeur": "eau",
+      "valeur": 0.32,
+      "unite": "mL",
+      "par": "requête moyenne",
+      "nature": "Déclaration sans méthode",
+      "perimetre": "non précisé ; 0,000085 gallon converti en mL",
+      "date": "2025-06",
+      "url": "https://blog.samaltman.com/the-gentle-singularity"
+    },
+    {
+      "source": "Mistral · Le Chat",
+      "grandeur": "eau",
+      "valeur": 45,
+      "unite": "mL",
+      "par": "réponse de 400 tokens",
+      "nature": "Analyse de cycle de vie",
+      "perimetre": "impact marginal de l'inférence en cycle de vie, hors terminaux des utilisateurs",
+      "date": "2025-07",
+      "url": "https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai"
+    },
+    {
+      "source": "Washington Post · GPT-4",
+      "grandeur": "eau",
+      "valeur": 519,
+      "unite": "mL",
+      "par": "e-mail de 100 mots",
+      "nature": "Estimation externe",
+      "perimetre": "refroidissement + eau de production de l'électricité, centre de données américain moyen",
+      "date": "2024-09",
+      "url": "https://www.washingtonpost.com/technology/2024/09/18/energy-ai-use-electricity-water-data-centers/"
+    },
+    {
+      "source": "Google · Gemini",
+      "grandeur": "énergie",
+      "valeur": 0.24,
+      "unite": "Wh",
+      "par": "requête texte médiane",
+      "nature": "Mesure interne",
+      "perimetre": "accélérateurs + processeur et mémoire + machines en attente + infrastructure du centre (PUE 1,09) ; hors réseau, terminaux et entraînement",
+      "date": "2025-08",
+      "url": "https://arxiv.org/abs/2508.15734"
+    },
+    {
+      "source": "OpenAI · ChatGPT",
+      "grandeur": "énergie",
+      "valeur": 0.34,
+      "unite": "Wh",
+      "par": "requête moyenne",
+      "nature": "Déclaration sans méthode",
+      "perimetre": "non précisé",
+      "date": "2025-06",
+      "url": "https://blog.samaltman.com/the-gentle-singularity"
+    },
+    {
+      "source": "Washington Post · GPT-4",
+      "grandeur": "énergie",
+      "valeur": 140,
+      "unite": "Wh",
+      "par": "e-mail de 100 mots",
+      "nature": "Estimation externe",
+      "perimetre": "centre de données américain moyen ; 0,14 kWh converti en Wh",
+      "date": "2024-09",
+      "url": "https://www.washingtonpost.com/technology/2024/09/18/energy-ai-use-electricity-water-data-centers/"
+    },
+    {
+      "source": "Compar:IA · tous modèles",
+      "grandeur": "énergie",
+      "valeur": 0.4,
+      "unite": "Wh",
+      "par": "conversation médiane",
+      "nature": "Estimation externe",
+      "perimetre": "estimation EcoLogits de la phase d'usage (inférence seulement)",
+      "date": "2026-06",
+      "url": "https://www.data.gouv.fr/datasets/compar-ia"
+    }
+  ]
+}

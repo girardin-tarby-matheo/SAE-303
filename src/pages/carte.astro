@@ -1,0 +1,96 @@
+---
+import Base from "../layouts/Base.astro";
+import Chip from "../components/Chip.astro";
+import CarteIntensite from "../components/CarteIntensite.astro";
+import { nombre } from "../lib/format";
+import intensite from "../data/intensite.json";
+import chiffres from "../data/chiffres.json";
+
+const { annee, france, etats_unis, rapport_us_fr, pays } = intensite;
+---
+
+<Base
+  titre="Carte du monde"
+  description={`Le même Wh ne pèse pas pareil selon le pays : intensité carbone de l'électricité en ${annee} (Ember, Our World in Data), en contexte des conversations en français de Compar:IA.`}
+>
+  <section class="relative overflow-hidden pb-14 pt-40">
+    <p class="mot-geant absolute -right-16 top-24" aria-hidden="true">CARBONE</p>
+    <div class="conteneur relative">
+      <span class="kicker">Contexte · {pays.length} pays · {annee}</span>
+      <h1 class="titre-1 mt-6 max-w-5xl">Le même Wh ne pèse pas pareil selon le pays</h1>
+      <p class="mt-6 max-w-2xl text-[19px] text-doux">
+        Le site mesure l'électricité des conversations en français ({nombre(chiffres.source.conversations_fr)} sur Compar:IA), en Wh.
+        Le CO₂ qui en découle dépend de la façon dont le pays produit son électricité&nbsp;: en {annee}, 1&nbsp;kWh émet environ
+        <strong class="text-navy">{rapport_us_fr} fois plus de CO₂</strong> aux États-Unis qu'en France.
+      </p>
+      <ul class="mt-10 flex flex-wrap gap-4" aria-label="Chiffres clés">
+        <li><Chip><span class="chiffre">{nombre(france)} g</span> de CO₂ par kWh en France</Chip></li>
+        <li><Chip><span class="chiffre">{nombre(etats_unis)} g</span> aux États-Unis</Chip></li>
+        <li><Chip volt><span class="chiffre">× {rapport_us_fr}</span> entre les deux</Chip></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="pb-16" aria-label="Carte">
+    <div class="conteneur">
+      <CarteIntensite />
+      <details class="carte mt-6 px-8 py-5">
+        <summary class="cursor-pointer font-semibold text-roi">Voir les {pays.length} pays en tableau</summary>
+        <div class="mt-4 max-h-105 overflow-y-auto">
+          <table class="table table-pin-rows text-[15px]">
+            <caption class="sr-only">Intensité carbone de l'électricité par pays en {annee}, du plus bas au plus haut</caption>
+            <thead>
+              <tr class="font-mono text-[12px] uppercase text-roi">
+                <th scope="col">Pays</th>
+                <th scope="col" class="text-right">gCO₂e / kWh ({annee})</th>
+              </tr>
+            </thead>
+            <tbody class="chiffre">
+              {
+                pays.map((p) => (
+                  <tr>
+                    <th scope="row" class="font-sans font-normal">{p.pays}</th>
+                    <td class="text-right">{nombre(p.gco2_kwh)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="pb-32" aria-labelledby="titre-lire">
+    <div class="conteneur">
+      <h2 id="titre-lire" class="titre-2">Comment lire la carte</h2>
+      <div class="mt-8 grid grid-cols-3 gap-6">
+        <article class="carte p-8">
+          <span class="numero text-roi">001</span>
+          <h3 class="mt-5 text-[19px]">Ce qu'elle montre</h3>
+          <p class="mt-3 text-[15px]">
+            Les grammes de CO₂ émis pour produire 1&nbsp;kWh d'électricité, en cycle de vie, en {annee}&nbsp;: la dernière année où
+            presque tous les pays ont une valeur. Régions et agrégats («&nbsp;Europe&nbsp;», «&nbsp;Monde&nbsp;») sont retirés.
+          </p>
+        </article>
+        <article class="carte p-8">
+          <span class="numero text-roi">002</span>
+          <h3 class="mt-5 text-[19px]">Une carte de contexte</h3>
+          <p class="mt-3 text-[15px]">
+            Compar:IA ne dit pas dans quel pays tourne chaque modèle. Nous ne calculons donc pas le CO₂ de chaque conversation&nbsp;:
+            la carte rappelle seulement qu'un même Wh n'a pas le même poids partout.
+          </p>
+        </article>
+        <article class="carte p-8">
+          <span class="numero text-roi">003</span>
+          <h3 class="mt-5 text-[19px]">Pourquoi une carte</h3>
+          <p class="mt-3 text-[15px]">
+            La valeur est déjà rapportée (par kWh produit)&nbsp;: elle se compare d'un pays à l'autre, quelle que soit sa taille.
+            Projection Equal Earth, qui respecte les surfaces&nbsp;; des classes de 200&nbsp;g suffisent pour lire des ordres de grandeur.
+          </p>
+        </article>
+      </div>
+      <a href="/methode#sources" class="btn mt-10 rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Sources et méthode</a>
+    </div>
+  </section>
+</Base>

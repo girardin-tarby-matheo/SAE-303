@@ -15,10 +15,12 @@
     "astro": "^7.2.4",
     "jsdom": "^30.0.1",
     "linkedom": "^0.18.13",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@types/jsdom": "^30.0.0",
+    "@types/three": "^0.186.0",
     "daisyui": "^5.7.50"
   }
 }

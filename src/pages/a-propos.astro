@@ -1,0 +1,144 @@
+---
+import Base from "../layouts/Base.astro";
+
+const equipe = [
+    { nom: "Solène Geiss", initiale: "S", role: "BUT MMI · groupe 03" },
+    {
+        nom: "Mathéo Girardin Tarby",
+        initiale: "M",
+        role: "BUT MMI · groupe 03",
+    },
+];
+
+const journal = [
+    {
+        outil: "Claude Code (Anthropic)",
+        usage: "Génération du code du site à partir de notre cahier des charges : pages Astro, composants, fonctions Plot, scripts TypeScript (séquence 3D, filtre, apparitions), script d'export des JSON depuis la base du notebook, séquence provisoire du Jeton.",
+        verification:
+            "Chiffres du site comparés aux cellules de contrôle du notebook (0,40 Wh ; 63 % ; 3,52 / 0,09 Wh ; 777 / 1 072 tokens ; × 39). Relecture des textes, des titres de graphiques et des textes alternatifs.",
+    },
+];
+---
+
+<Base
+    titre="À propos"
+    description="Un projet de SAÉ 303 au BUT MMI de Montbéliard, en réponse au défi A de l'ADEME sur l'impact environnemental de l'IA générative."
+>
+    <section class="pb-12 pt-36">
+        <div class="conteneur">
+            <div class="bloc-navy sombre relative overflow-hidden px-16 py-20">
+                <p
+                    class="mot-geant absolute -bottom-[0.3em] right-0"
+                    aria-hidden="true"
+                >
+                    MMI
+                </p>
+                <span class="kicker">À propos</span>
+                <h1 class="titre-1 relative mt-6 max-w-4xl">
+                    Un projet de SAÉ 303,<span class="titre-fin"
+                        >MMI Montbéliard</span>
+                </h1>
+                <p class="relative mt-6 max-w-2xl text-[19px] text-glace">
+                    Notre projet répond à une seule question, avec des données
+                    ouvertes&nbsp;: pour une même demande, combien d'électricité
+                    chaque modèle d'IA consomme-t-il, selon le nombre de tokens
+                    qu'il produit&nbsp;?
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-12" aria-labelledby="titre-equipe">
+        <div class="conteneur grid grid-cols-12 gap-6">
+            <div class="col-span-4">
+                <span class="numero text-roi">001</span>
+                <h2 id="titre-equipe" class="titre-2 mt-5">L'équipe</h2>
+            </div>
+            <ul class="col-span-8 grid grid-cols-2 gap-6">
+                {
+                    equipe.map((p) => (
+                        <li class="carte flex items-center gap-5 p-7">
+                            <span
+                                class="flex size-16 flex-none items-center justify-center rounded-full bg-moyen font-display text-[22px] font-semibold text-white"
+                                aria-hidden="true"
+                            >
+                                {p.initiale}
+                            </span>
+                            <span>
+                                <span class="block text-[19px] font-bold">
+                                    {p.nom}
+                                </span>
+                                <span class="text-doux">{p.role}</span>
+                            </span>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </section>
+
+    <section class="pb-12" aria-labelledby="titre-defi">
+        <div class="conteneur grid grid-cols-12 gap-6">
+            <div class="col-span-4">
+                <span class="numero text-roi">002</span>
+                <h2 id="titre-defi" class="titre-2 mt-5">
+                    Le défi A de l'ADEME
+                </h2>
+            </div>
+            <div class="carte col-span-8 p-8 text-[18px]">
+                <p>
+                    L'ADEME demande comment mobiliser les données existantes
+                    pour éclairer le débat public sur l'impact environnemental
+                    de l'IA générative, face à l'opacité du secteur. Notre
+                    réponse&nbsp;: montrer, pour une même demande, ce qui fait
+                    vraiment consommer un modèle, afin d'aider chacun à choisir
+                    un modèle adapté.
+                </p>
+                <a
+                    href="https://observablehq.com/@mmi-montbeliard/sae-303-gr-03"
+                    class="btn btn-primary mt-6 rounded-full px-6"
+                >
+                    Voir l'analyse complète (notebook Observable) <span
+                        aria-hidden="true">→</span
+                    >
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-32" aria-labelledby="titre-journal">
+        <div class="conteneur grid grid-cols-12 gap-6">
+            <div class="col-span-4">
+                <span class="numero text-roi">003</span>
+                <h2 id="titre-journal" class="titre-2 mt-5">Journal IA</h2>
+                <p class="mt-4 text-doux">
+                    Les outils d'IA utilisés, ce qu'ils ont apporté, ce qui a
+                    été vérifié ou corrigé à la main.
+                </p>
+            </div>
+            <div class="col-span-8 space-y-6">
+                {
+                    journal.map((j) => (
+                        <article class="carte p-8">
+                            <h3 class="text-[19px]">{j.outil}</h3>
+                            <dl class="mt-4 space-y-4">
+                                <div>
+                                    <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">
+                                        Ce que ça a apporté
+                                    </dt>
+                                    <dd class="mt-1">{j.usage}</dd>
+                                </div>
+                                <div>
+                                    <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi">
+                                        Vérifié ou corrigé à la main
+                                    </dt>
+                                    <dd class="mt-1">{j.verification}</dd>
+                                </div>
+                            </dl>
+                        </article>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+</Base>

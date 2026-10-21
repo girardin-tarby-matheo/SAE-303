@@ -6,7 +6,7 @@
   themes: false;
 }
 @plugin "daisyui/theme" {
-  name: "tokenwatt";
+  name: "SAE 303";
   default: true;
   prefersdark: false;
   color-scheme: light;

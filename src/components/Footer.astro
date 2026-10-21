@@ -7,7 +7,7 @@ const { source } = chiffres;
   <div class="conteneur relative z-10 grid grid-cols-12 gap-10 pb-48">
     <div class="col-span-4">
       <a href="/" class="flex items-center gap-2 font-display text-lg font-semibold tracking-wide">
-        
+        <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 30 16 16 30 2 16Z" fill="#5B8DEF" /><path d="M16 2 30 16H2Z" fill="#A9C6F5" /></svg>
         SAE 303
       </a>
       <p class="mt-4 max-w-xs text-[15px] text-ciel">
@@ -15,7 +15,7 @@ const { source } = chiffres;
       </p>
     </div>
     <nav class="col-span-3" aria-label="Pied de page">
-      <h2 class="mb-4 text-xs font-semibold tracking-[0.1em] text-ciel">PAGES</h2>
+      <h2 class="mb-4 font-mono text-xs font-normal tracking-[0.14em] text-ciel">PAGES</h2>
       <ul class="space-y-2 text-[15px] font-semibold">
         <li><a class="hover:underline" href="/">Accueil</a></li>
         <li><a class="hover:underline" href="/demandes">Demandes</a></li>
@@ -25,7 +25,7 @@ const { source } = chiffres;
       </ul>
     </nav>
     <div class="col-span-5 text-[15px]">
-      <h2 class="mb-4 text-xs font-semibold tracking-[0.1em] text-ciel">SOURCE ET MENTIONS</h2>
+      <h2 class="mb-4 font-mono text-xs font-normal tracking-[0.14em] text-ciel">SOURCE ET MENTIONS</h2>
       <p>
         Données&nbsp;: <a class="underline" href={source.url}>{source.nom}</a> ({source.producteur}), {source.licence}, mise à jour du {source.date}.
         Électricité <strong>estimée</strong> par la méthode EcoLogits.

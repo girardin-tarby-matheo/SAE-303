@@ -1,0 +1,77 @@
+---
+// /demandes : liste numérotée de tous les types de demande, triés par nombre de conversations (route A)
+import Base from "../../layouts/Base.astro";
+import LigneNumerotee from "../../components/LigneNumerotee.astro";
+import { nombre } from "../../lib/format";
+import categories from "../../data/categories.json";
+import chiffres from "../../data/chiffres.json";
+---
+
+<Base
+    titre="Types de demande"
+    description="Choisis ton type de demande et compare l'électricité consommée par les petits, moyens et grands modèles d'IA."
+>
+    <section class="relative overflow-hidden pb-16 pt-40">
+        <p class="mot-geant absolute -right-10 top-24" aria-hidden="true">
+            DEMANDE
+        </p>
+        <div class="conteneur relative">
+            <span class="kicker"
+                >Types de demande · {categories.length} catégories</span
+            >
+            <h1 class="titre-1 mt-6 max-w-4xl">
+                Quel est ton type de demande&nbsp;?
+            </h1>
+            <p class="mt-6 max-w-2xl text-[19px] text-doux">
+                Pour comparer les modèles sur <strong class="text-navy"
+                    >une même demande</strong
+                >, choisis la catégorie qui te ressemble. Chaque page montre
+                combien de tokens écrit une réponse et combien coûtent 1 000
+                tokens, selon la taille du modèle.
+            </p>
+        </div>
+    </section>
+
+    <section class="pb-32" aria-labelledby="titre-liste">
+        <div class="conteneur">
+            <div class="carte px-10 py-4">
+                <h2 id="titre-liste" class="sr-only">
+                    Liste des types de demande
+                </h2>
+                <div
+                    class="grid grid-cols-[5rem_1fr_12rem_13rem_3rem] gap-6 border-b-2 border-navy py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-roi"
+                    aria-hidden="true"
+                >
+                    <span>N°</span><span>Type de demande</span><span
+                        >Conversations</span
+                    ><span class="text-right">Écart grand / petit</span><span
+                    ></span>
+                </div>
+                <ol>
+                    {
+                        categories.map((c) => (
+                            <LigneNumerotee
+                                rang={c.rang}
+                                href={`/demandes/${c.slug}`}
+                                titre={c.nom}
+                                sousTitre={c.categorie}
+                                detail={`${nombre(c.conversations)} conv.`}
+                                meta={
+                                    c.ecart != null
+                                        ? `× ${c.ecart} par token`
+                                        : "écart inconnu"
+                                }
+                            />
+                        ))
+                    }
+                </ol>
+            </div>
+            <p class="mt-6 max-w-3xl text-[14px] text-doux">
+                Catégories attribuées par Compar:IA (noms d'origine en anglais
+                sous la traduction). Seuls les modèles ayant au moins
+                {chiffres.modeles.seuil_conversations} conversations dans une catégorie
+                y sont comptés. Conversations = réponses de modèles analysées.
+            </p>
+        </div>
+    </section>
+</Base>

@@ -1,25 +1,30 @@
 ---
+// Carte-compteur : rend un chiffre « objet » (équivalent de la carte bancaire de Payrot). Fond uni, sans dégradé.
 import { minutesLED, nombre } from "../lib/format";
 interface Props {
   etiquette: string;
   valeur: number | null;
   legende: string;
   repere?: boolean;
+  tilt?: boolean;
   class?: string;
 }
-const { etiquette, valeur, legende, repere = false, class: classe } = Astro.props;
+const { etiquette, valeur, legende, repere = false, tilt = false, class: classe } = Astro.props;
 const chiffre = valeur == null ? "inconnu" : nombre(valeur, 2);
 ---
 
-<div class:list={["rounded-[20px] bg-roi p-7 text-white", classe]}>
-  <p class="text-[12px] uppercase tracking-[0.12em] text-glace">{etiquette}</p>
+<div
+  data-tilt={tilt ? "" : undefined}
+  class:list={["rounded-[20px] bg-roi p-7 text-white shadow-bleu-fort", classe]}
+>
+  <p class="font-mono text-[11px] uppercase tracking-[0.16em] text-glace">{etiquette}</p>
   <p class="mt-3 font-display text-[44px] font-semibold leading-none">
     {chiffre}{valeur != null && <span class="ml-2 text-[28px]">Wh</span>}
   </p>
   <p class="mt-3 text-[15px] text-glace">{legende}</p>
   {
     repere && valeur != null && (
-      <p class="mt-4 border-t border-white/25 pt-3 text-[13px] text-glace">
+      <p class="mt-4 border-t border-white/25 pt-3 font-mono text-[12px] text-glace">
         ≈ {minutesLED(valeur)} d'ampoule LED 10&nbsp;W
       </p>
     )

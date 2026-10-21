@@ -1,0 +1,283 @@
+---
+// /demandes/[categorie] : route C, une page statique par catégorie (getStaticPaths).
+// Le sélecteur navigue vers une autre page : aucun graphique n'est recalculé dans le navigateur.
+import Base from "../../layouts/Base.astro";
+import Figure from "../../components/Figure.astro";
+import EtiquetteTaille from "../../components/EtiquetteTaille.astro";
+import { barresParTaille } from "../../lib/graphiques";
+import { documentBuild } from "../../lib/dom";
+import { nombre, wh, tokens } from "../../lib/format";
+import type { Categorie } from "../../lib/types";
+import categories from "../../data/categories.json";
+
+export function getStaticPaths() {
+    return categories.map((c) => ({
+        params: { categorie: c.slug },
+        props: { c },
+    }));
+}
+
+const c = Astro.props.c as Categorie;
+const document = documentBuild();
+const svgLongueur = barresParTaille(c.parTaille, {
+    champ: "tokens_median",
+    label: "tokens écrits par réponse (médiane) →",
+    document,
+    width: 560,
+}).outerHTML;
+const svgCout = barresParTaille(c.parTaille, {
+    champ: "wh_1000_tokens_median",
+    label: "Wh pour 1 000 tokens (médiane) →",
+    document,
+    width: 560,
+}).outerHTML;
+const grand = c.parTaille.find((d) => d.taille === "grand");
+---
+
+<Base
+    titre={c.nom}
+    description={c.reponse ??
+        `Électricité consommée par les modèles d'IA pour la catégorie ${c.nom}.`}
+>
+    <section class="pb-12 pt-36">
+        <div class="conteneur">
+            <div class="flex items-center justify-between gap-6">
+                <nav
+                    class="breadcrumbs font-mono text-[13px]"
+                    aria-label="Fil d'Ariane"
+                >
+                    <ul>
+                        <li><a href="/">Accueil</a></li>
+                        <li><a href="/demandes">Demandes</a></li>
+                        <li aria-current="page">{c.nom}</li>
+                    </ul>
+                </nav>
+                <label
+                    class="flex items-center gap-3 text-[14px] font-semibold"
+                >
+                    Changer de demande
+                    <select
+                        id="selecteur-categorie"
+                        class="select select-bordered w-80 rounded-full border-trait bg-white"
+                    >
+                        {
+                            categories.map((o) => (
+                                <option
+                                    value={o.slug}
+                                    selected={o.slug === c.slug}
+                                >
+                                    {o.nom}
+                                </option>
+                            ))
+                        }
+                    </select>
+                </label>
+            </div>
+
+            <span class="kicker mt-12"
+                >Demande n° {String(c.rang).padStart(3, "0")}</span
+            >
+            <h1 class="titre-1 mt-6 max-w-5xl">{c.nom}</h1>
+            <p class="mt-3 font-mono text-[13px] text-doux" lang="en">
+                Catégorie Compar:IA&nbsp;: {c.categorie}
+            </p>
+
+            <dl class="mt-10 grid grid-cols-4 gap-5">
+                <div class="carte p-6">
+                    <dt
+                        class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi"
+                    >
+                        Modèles
+                    </dt>
+                    <dd class="mt-2 font-display text-[36px] font-semibold">
+                        {nombre(c.modeles)}
+                    </dd>
+                </div>
+                <div class="carte p-6">
+                    <dt
+                        class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi"
+                    >
+                        Conversations
+                    </dt>
+                    <dd class="mt-2 font-display text-[36px] font-semibold">
+                        {nombre(c.conversations)}
+                    </dd>
+                </div>
+                <div class="carte p-6">
+                    <dt
+                        class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi"
+                    >
+                        Écart par token
+                    </dt>
+                    <dd class="mt-2 font-display text-[36px] font-semibold">
+                        {c.ecart != null ? `× ${c.ecart}` : "inconnu"}
+                    </dd>
+                </div>
+                <div class="carte p-6">
+                    <dt
+                        class="font-mono text-[12px] uppercase tracking-[0.12em] text-roi"
+                    >
+                        Réponse d'un grand modèle
+                    </dt>
+                    <dd class="mt-2 font-display text-[36px] font-semibold">
+                        {tokens(grand?.tokens_median)}
+                        <span class="text-[22px]">tk</span>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+
+    <section class="pb-12" aria-label="Les deux graphiques">
+        <div class="conteneur grid grid-cols-2 gap-6">
+            <Figure
+                titre="Combien de tokens écrit une réponse ?"
+                sousTitre={c.phrase_longueur}
+                svg={svgLongueur}
+                alt={c.alt_longueur}
+                source="Source : Compar:IA · médiane des modèles de chaque taille (≥ 100 conversations)"
+            />
+            <Figure
+                titre="Combien d'électricité pour 1 000 tokens ?"
+                sousTitre={c.phrase}
+                svg={svgCout}
+                alt={c.alt}
+                source="Source : Compar:IA, estimation EcoLogits · médiane des modèles de chaque taille"
+            />
+        </div>
+        <div class="conteneur mt-6">
+            {
+                c.reponse && (
+                    <p class="rounded-[20px] border border-dashed border-moyen bg-glace p-8 text-[19px] leading-relaxed">
+                        <span class="mb-2 block font-mono text-[12px] uppercase tracking-[0.12em] text-roi">
+                            La réponse
+                        </span>
+                        {c.reponse}
+                    </p>
+                )
+            }
+            <p class="mt-4 text-[14px] text-doux">
+                Taille d'un modèle selon ses paramètres actifs&nbsp;: petit &lt;
+                15 milliards, moyen &lt; 70, grand au-delà, inconnue si non
+                publiée. Repère&nbsp;: 1&nbsp;Wh = une ampoule LED de 10&nbsp;W
+                allumée 6&nbsp;minutes.
+            </p>
+        </div>
+    </section>
+
+    <section class="pb-16" aria-labelledby="titre-tableau">
+        <div class="conteneur">
+            <div class="carte p-10">
+                <h2 id="titre-tableau" class="text-[22px]">
+                    Les {nombre(c.modeles)} modèles de cette catégorie
+                </h2>
+                <p class="mt-2 text-doux">
+                    Triés du plus gourmand au plus sobre (Wh par conversation,
+                    médiane). Clique sur un modèle pour voir sa fiche.
+                </p>
+                <div
+                    class="mt-6 max-h-[640px] overflow-auto rounded-[12px] border border-trait"
+                >
+                    <table class="table table-pin-rows text-[14px]">
+                        <caption class="sr-only"
+                            >Modèles de la catégorie {c.nom}, triés par Wh par
+                            conversation</caption
+                        >
+                        <thead>
+                            <tr
+                                class="bg-glace font-mono text-[12px] uppercase text-navy"
+                            >
+                                <th scope="col">Modèle</th>
+                                <th scope="col">Taille</th>
+                                <th scope="col" class="text-right"
+                                    >Conversations</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Tokens / réponse</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Wh / 1 000 tokens</th
+                                >
+                                <th scope="col" class="text-right"
+                                    >Wh / conversation</th
+                                >
+                            </tr>
+                        </thead>
+                        <tbody class="chiffre">
+                            {
+                                c.liste.map((m) => (
+                                    <tr class="hover:bg-glace">
+                                        <th
+                                            scope="row"
+                                            class="font-sans font-semibold"
+                                        >
+                                            <a
+                                                class="underline-offset-4 hover:underline"
+                                                href={`/modeles/${m.slug}`}
+                                            >
+                                                {m.modele}
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <EtiquetteTaille
+                                                taille={m.taille}
+                                            />
+                                        </td>
+                                        <td class="text-right">
+                                            {nombre(m.n_conv)}
+                                        </td>
+                                        <td class="text-right">
+                                            {tokens(m.tokens_median)}
+                                        </td>
+                                        <td class="text-right">
+                                            {wh(m.wh_1000_tokens, false)}
+                                        </td>
+                                        <td class="text-right font-semibold">
+                                            {wh(m.wh_median_conv, false)}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-4 text-[13px] text-doux">
+                    Source : Compar:IA, estimation EcoLogits · modèles ayant au
+                    moins 100 conversations dans cette catégorie.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-32" aria-labelledby="titre-pourquoi">
+        <div class="conteneur">
+            <div
+                class="rounded-[20px] border-l-4 border-volt bg-white p-10 shadow-bleu"
+            >
+                <h2 id="titre-pourquoi" class="text-[22px]">
+                    Pourquoi ce choix de catégorie&nbsp;?
+                </h2>
+                <p class="mt-4 max-w-3xl">
+                    Pour <strong>adapter</strong> la comparaison&nbsp;: chacun regarde
+                    le type de demande qu'il fait le plus. Sans ce choix, on mélangerait
+                    des demandes différentes et on ne comparerait plus «&nbsp;une
+                    même demande&nbsp;». Pas d'infobulle&nbsp;: les valeurs exactes
+                    sont écrites sur les barres et dans le tableau.
+                </p>
+                <a
+                    href="/methode"
+                    class="btn mt-6 rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white"
+                    >Voir la méthode <span aria-hidden="true">→</span></a
+                >
+            </div>
+        </div>
+    </section>
+</Base>
+
+<script>
+    // Le sélecteur mène à la page statique de la catégorie choisie
+    const s = document.querySelector<HTMLSelectElement>("#selecteur-categorie");
+    s?.addEventListener("change", () => {
+        location.href = `/demandes/${s.value}`;
+    });
+</script>

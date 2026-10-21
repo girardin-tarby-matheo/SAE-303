@@ -1,19 +1,10 @@
 ---
 interface Props {
-  volt?: boolean;
   class?: string;
-  tilt?: boolean;
 }
-const { volt = false, class: classe, tilt = false } = Astro.props;
+const { class: classe } = Astro.props;
 ---
 
-<span
-  data-tilt={tilt ? "" : undefined}
-  class:list={[
-    "badge h-auto gap-2.5 rounded-full border border-trait bg-white py-2 pl-2 pr-4 text-[15px] font-bold text-navy shadow-bleu",
-    classe,
-  ]}
->
-  <span class:list={["size-6 flex-none rounded-full", volt ? "bg-volt" : "bg-roi"]} aria-hidden="true"></span>
-  <span><slot /></span>
+<span class:list={["badge h-auto rounded-full border border-trait bg-white px-4 py-2 text-[15px] font-semibold text-navy", classe]}>
+  <slot />
 </span>

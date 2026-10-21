@@ -14,7 +14,7 @@ const {
   description = "Pour une même demande, combien d'électricité chaque modèle d'IA consomme-t-il ? Données ouvertes Compar:IA, estimation EcoLogits.",
   sombre = false,
 } = Astro.props;
-const titreComplet = titre === "TOKENWATT" ? "TOKENWATT · Ce que coûte vraiment une réponse d'IA" : `${titre} · TOKENWATT`;
+const titreComplet = titre === "SAE 303" ? "SAE 303 · Ce que coûte vraiment une réponse d'IA" : `${titre} · SAE 303`;
 const image = new URL("/og-jeton.png", Astro.site);
 const canonique = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -30,7 +30,7 @@ const canonique = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="TOKENWATT" />
+    <meta property="og:site_name" content="SAE 303" />
     <meta property="og:title" content={titreComplet} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />

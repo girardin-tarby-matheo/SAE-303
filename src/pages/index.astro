@@ -35,26 +35,24 @@ const top5 = categories.slice(0, 5);
 const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
 ---
 
-<Base titre="TOKENWATT">
+<Base titre="SAE 303">
   <Jeton>
     <Hero />
 
     <section id="contexte" data-jeton="30-59" data-jeton-mode="colonne" class="flex min-h-screen items-center py-28" aria-labelledby="titre-contexte">
       <div class="conteneur grid grid-cols-12 gap-10">
         <div class="col-span-7" data-reveal>
-          <span class="kicker">001 · Contexte</span>
+          <span class="kicker">Contexte</span>
           <h2 id="titre-contexte" class="titre-1 mt-6">Chaque jour, des millions de demandes à des IA.</h2>
-          <p class="mt-6 font-display text-[26px] font-extralight uppercase leading-tight text-roi">Personne ne sait ce qu'elles consomment.</p>
+          <p class="mt-6 text-[22px] font-semibold leading-tight text-roi">Personne ne sait ce qu'elles consomment.</p>
           <p class="mt-8 max-w-xl text-doux">
-            Reformuler un mail, expliquer un cours, corriger du code&nbsp;: chaque réponse est écrite token par token.
-            Voici les ordres de grandeur, estimés à partir de {nombre(source.conversations_fr)} conversations en français.
+            Une réponse d'IA s'écrit token par token. Ordres de grandeur estimés à partir de {nombre(source.conversations_fr)} conversations en français.
           </p>
           <ul class="mt-10 flex flex-wrap gap-4" aria-label="Chiffres clés">
             <li><Chip><span class="chiffre">{wh(conversation.wh_median)}</span> pour une conversation médiane</Chip></li>
-            <li><Chip>1 Wh = LED 10 W pendant 6 min</Chip></li>
             <li><Chip><span class="chiffre">{tokens(conversation.tokens_median)}</span> tokens par réponse</Chip></li>
           </ul>
-          <p class="mt-6 font-mono text-[13px] text-doux">
+          <p class="mt-6 text-[14px] text-doux">
             {wh(conversation.wh_median)} ≈ une ampoule LED de 10 W allumée {minutesLED(conversation.wh_median)}.
           </p>
         </div>
@@ -66,9 +64,9 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
       <div class="conteneur grid grid-cols-12 gap-10">
         <div class="col-span-7">
           <div data-reveal>
-            <span class="kicker">002 · Exploration</span>
+            <span class="kicker">Exploration</span>
             <h2 id="titre-exploration" class="titre-2 mt-6">Combien consomme une conversation&nbsp;?</h2>
-            <p class="mt-4 font-display text-[22px] font-extralight uppercase leading-tight text-roi">
+            <p class="mt-4 text-[20px] font-semibold leading-tight text-roi">
               Près de 2 conversations sur 3 consomment moins de 1&nbsp;Wh.
             </p>
           </div>
@@ -82,7 +80,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
             source={`Source : Compar:IA, estimation EcoLogits · échantillon fixe de ${nombre(conversation.echantillon)} conversations`}
           />
           <aside class="mt-6 rounded-[20px] border border-trait bg-glace p-6" data-reveal>
-            <p class="font-mono text-[12px] uppercase tracking-[0.14em] text-roi">La moyenne ment</p>
+            <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-roi">Médiane et moyenne</p>
             <p class="mt-2">
               Médiane <strong class="chiffre">{wh(conversation.wh_median)}</strong>, moyenne <strong class="chiffre">{wh(conversation.wh_moyen)}</strong>&nbsp;:
               la moyenne est {rapport} fois plus haute, tirée par quelques conversations extrêmes (jusqu'à {nombre(conversation.wh_max, 0)}&nbsp;Wh).
@@ -98,9 +96,9 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
       <div class="conteneur grid grid-cols-12 gap-10">
         <div class="col-span-8">
           <div data-reveal>
-            <span class="kicker">003 · Révélation</span>
+            <span class="kicker">L'écart</span>
             <h2 id="titre-revelation" class="titre-2 mt-6">Écrire plus, ou coûter plus par token&nbsp;?</h2>
-            <p class="mt-4 font-display text-[22px] font-extralight uppercase leading-tight text-ciel">
+            <p class="mt-4 text-[20px] font-semibold leading-tight text-ciel">
               1 000 tokens coûtent {principale.ecart} fois plus à un grand modèle.
             </p>
             <p class="mt-4 max-w-2xl text-glace">
@@ -128,7 +126,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
             />
           </div>
           <a href={`/demandes/${principale.slug}`} class="btn btn-lg mt-8 rounded-full border-0 bg-white px-8 text-navy hover:bg-glace">
-            Voir pour ta demande <span aria-hidden="true">→</span>
+            Voir pour ta demande
           </a>
         </div>
         <div class="col-span-4" data-jeton-cible></div>
@@ -141,13 +139,13 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
         <div class="bloc-navy encoche sombre relative px-16 pb-14 pt-20">
           <div class="pointer-events-none absolute right-[20px] top-0 aspect-square w-[520px] -translate-y-[55%]" data-jeton-cible aria-hidden="true"></div>
           <div class="max-w-2xl" data-reveal>
-            <span class="kicker">004 · Conclusion</span>
+            <span class="kicker">Conclusion</span>
             <h2 id="titre-conclusion" class="titre-2 mt-6">Choisir son modèle selon sa demande.</h2>
-            <p class="mt-6 font-display text-[20px] font-extralight uppercase leading-snug text-ciel">
+            <p class="mt-6 text-[19px] font-semibold leading-snug text-ciel">
               Pour une demande simple, un petit modèle répond aussi longuement… pour environ {Math.round(chiffres.ensemble.ecart / 10) * 10} fois moins d'électricité par token.
             </p>
           </div>
-          <h3 class="mt-14 font-mono text-[13px] font-normal tracking-[0.14em] text-ciel">LES 5 TYPES DE DEMANDE LES PLUS FRÉQUENTS</h3>
+          <h3 class="mt-14 text-[13px] font-semibold uppercase tracking-[0.08em] text-ciel">Les 5 types de demande les plus fréquents</h3>
           <ol class="mt-4">
             {
               top5.map((c) => (
@@ -171,7 +169,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
     <div class="conteneur">
       <div class="carte grid grid-cols-12 items-center gap-10 p-12">
         <div class="col-span-7">
-          <h2 id="titre-source" class="titre-2">Cite ta source, donne ta méthode, publie tes données.</h2>
+          <h2 id="titre-source" class="titre-2">Source, méthode et données.</h2>
         </div>
         <div class="col-span-5">
           <p>
@@ -179,7 +177,7 @@ const rapport = nombre(conversation.rapport_moyenne_mediane, 0);
             Électricité estimée par EcoLogits (inférence + fabrication des GPU, pas l'entraînement).
           </p>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode <span aria-hidden="true"></span></a>
+            <a href="/methode" class="btn rounded-full border-2 border-navy bg-transparent px-6 text-navy hover:bg-navy hover:text-white">Méthode</a>
             <a href="/methode#telechargements" class="btn btn-accent rounded-full px-6">Télécharger les données</a>
           </div>
         </div>

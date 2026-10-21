@@ -1,8 +1,6 @@
 ---
 import CarteCompteur from "./CarteCompteur.astro";
-import Chip from "./Chip.astro";
 import chiffres from "../data/chiffres.json";
-import { nombre } from "../lib/format";
 
 const grand = chiffres.categorie_principale.parTaille.find((d) => d.taille === "grand")!;
 ---
@@ -11,7 +9,7 @@ const grand = chiffres.categorie_principale.parTaille.find((d) => d.taille === "
   id="hero"
   data-jeton="0-29"
   data-jeton-boucle
-  class="scene-3d relative h-screen min-h-[780px] overflow-hidden pt-20"
+  class="relative h-screen min-h-[780px] overflow-hidden pt-20"
   aria-labelledby="titre-hero"
 >
   <p class="mot-geant absolute left-1/2 top-[12%] -translate-x-1/2" aria-hidden="true">TOKEN</p>
@@ -25,37 +23,20 @@ const grand = chiffres.categorie_principale.parTaille.find((d) => d.taille === "
       <img id="jeton-fixe" src="/3d/jeton-fixe.webp" alt="" width="1600" height="1600" fetchpriority="high" decoding="async" class="h-full w-full" />
     </div>
 
-    <div data-tilt class="entree carte absolute left-12 top-[40%] w-[300px] p-7" style="--i: 1">
-      <p class="font-bold leading-snug">Une demande à une IA, combien d'électricité&nbsp;?</p>
-      <p class="mt-2 text-[15px] text-doux">La réponse dépend moins de la longueur que du modèle.</p>
-    </div>
-
     <CarteCompteur
-      tilt
-      class="entree absolute right-12 top-[24%] w-[330px]"
-      etiquette="Carte-compteur · grand modèle"
+      class="absolute right-12 top-[24%] w-[330px]"
+      etiquette="Grand modèle"
       valeur={grand.wh_1000_tokens_median}
       legende={`pour 1 000 tokens · ${chiffres.categorie_principale.nom.toLowerCase()}`}
       repere
     />
 
-    <div class="entree absolute left-[28%] top-[19%]" style="--i: 3">
-      <Chip tilt><span class="chiffre">{nombre(chiffres.source.conversations_fr)}</span> conversations</Chip>
-    </div>
-    <div class="entree absolute right-[21%] top-[55%]" style="--i: 4">
-      <Chip tilt volt><span class="chiffre">× {chiffres.categorie_principale.ecart}</span> par token</Chip>
-    </div>
-
     <div class="absolute inset-x-0 bottom-[7%] text-center">
-      <h1 id="titre-hero" class="entree mx-auto max-w-[1100px] text-[clamp(44px,4vw,60px)]" style="--i: 5">Ce que coûte vraiment une réponse d'IA</h1>
-      <div class="entree mt-8 flex justify-center gap-4" style="--i: 6">
-        <a href="/demandes" class="btn btn-primary btn-lg rounded-full px-8">Compare ta demande <span aria-hidden="true">→</span></a>
-        <a href="#contexte" class="btn btn-outline btn-lg rounded-full border-2 border-navy px-8 text-navy hover:bg-navy hover:text-white">Comprendre en 3 min <span aria-hidden="true">↓</span></a>
+      <h1 id="titre-hero" class="mx-auto max-w-[1100px] text-[clamp(44px,4vw,60px)]">Ce que coûte vraiment une réponse d'IA</h1>
+      <div class="mt-8 flex justify-center gap-4">
+        <a href="/demandes" class="btn btn-primary btn-lg rounded-full px-8">Compare ta demande</a>
+        <a href="#contexte" class="btn btn-outline btn-lg rounded-full border-2 border-navy px-8 text-navy hover:bg-navy hover:text-white">Comprendre</a>
       </div>
     </div>
   </div>
 </section>
-
-<script>
-  import "../scripts/tilt";
-</script>
